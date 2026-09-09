@@ -1,0 +1,19 @@
+<label class="ui-input" [attr.for]="id()">
+  @if (label()) {
+    <span class="ui-input__label">{{ label() }}</span>
+  }
+  <input
+    class="ui-input__control"
+    [id]="id()"
+    [type]="type()"
+    [placeholder]="placeholder()"
+    [autocomplete]="autocomplete()"
+    [required]="required()"
+    [disabled]="disabled()"
+    [value]="value()"
+    (input)="value.set(($any($event.target)).value)"
+  />
+  @if (error()) {
+    <span class="ui-input__error">{{ error() }}</span>
+  }
+</label>

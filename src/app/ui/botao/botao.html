@@ -1,0 +1,16 @@
+<button
+  class="ui-botao"
+  [attr.type]="type()"
+  [class.ui-botao--accent]="variant() === 'accent'"
+  [class.ui-botao--primary]="variant() === 'primary'"
+  [class.ui-botao--ghost]="variant() === 'ghost'"
+  [class.ui-botao--outline]="variant() === 'outline'"
+  [class.ui-botao--full]="fullWidth()"
+  [disabled]="disabled() || loading()"
+  (click)="onClick()"
+>
+  @if (loading()) {
+    <span class="ui-botao__spinner" aria-hidden="true"></span>
+  }
+  {{ label() }}
+</button>

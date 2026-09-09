@@ -1,0 +1,89 @@
+:host {
+  display: inline-block;
+}
+
+:host(.full),
+:host:has(.ui-botao--full) {
+  display: block;
+  width: 100%;
+}
+
+.ui-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-control);
+  border: 1px solid transparent;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    filter 0.15s ease,
+    opacity 0.15s ease,
+    border-color 0.15s ease;
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.ui-botao:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ui-botao--accent {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.ui-botao--accent:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+.ui-botao--primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.ui-botao--ghost {
+  background: transparent;
+  color: var(--color-primary);
+}
+
+.ui-botao--outline {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.45);
+  color: inherit;
+}
+
+.navbar .ui-botao--outline {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #fff;
+}
+
+.app-page .ui-botao--outline,
+.auth-shell .ui-botao--outline,
+:host-context(.page) .ui-botao--outline {
+  border-color: var(--color-border);
+  color: var(--color-primary);
+}
+
+.ui-botao--full {
+  width: 100%;
+}
+
+.ui-botao__spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

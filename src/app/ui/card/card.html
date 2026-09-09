@@ -1,0 +1,8 @@
+<section class="ui-card" [class.ui-card--padded]="padded()">
+  @if (title()) {
+    <h2 class="ui-card__title">{{ title() }}</h2>
+  }
+  <div class="ui-card__body">
+    <ng-content />
+  </div>
+</section>

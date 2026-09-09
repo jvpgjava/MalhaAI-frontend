@@ -1,0 +1,123 @@
+:host {
+  display: block;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  min-height: var(--nav-height);
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(13, 59, 69, 0.2);
+}
+
+.navbar__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: var(--nav-height);
+  padding: 0.75rem clamp(1rem, 3vw, 2rem);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar__brand {
+  font-size: 1.35rem;
+  text-decoration: none;
+  flex-shrink: 0;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.navbar__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+
+  a {
+    padding: 0.45rem 0.75rem;
+    border-radius: var(--radius-control);
+    color: rgba(255, 255, 255, 0.82);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+
+    &:hover,
+    &.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+      text-decoration: none;
+    }
+  }
+}
+
+.navbar__user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.navbar__email {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.navbar__toggle {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  justify-self: end;
+  padding: 0.5rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: #fff;
+  }
+}
+
+@media (max-width: 960px) {
+  .navbar__inner {
+    grid-template-columns: 1fr auto;
+  }
+
+  .navbar__toggle {
+    display: flex;
+  }
+
+  .navbar__nav,
+  .navbar__user {
+    display: none;
+    grid-column: 1 / -1;
+  }
+
+  .navbar__nav.is-open,
+  .navbar__user.is-open {
+    display: flex;
+  }
+
+  .navbar__nav.is-open {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navbar__user.is-open {
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+  }
+}

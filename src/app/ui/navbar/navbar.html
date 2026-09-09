@@ -1,0 +1,37 @@
+@if (isAuthenticated()) {
+  <header class="navbar">
+    <div class="navbar__inner">
+      <a class="navbar__brand logo-wordmark" routerLink="/grafo" (click)="closeMenu()">
+        Malha<span class="accent">IA</span>
+      </a>
+
+      <button
+        class="navbar__toggle"
+        type="button"
+        [attr.aria-expanded]="menuOpen()"
+        aria-label="Abrir menu"
+        (click)="toggleMenu()"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="navbar__nav" [class.is-open]="menuOpen()">
+        <a routerLink="/grafo" routerLinkActive="active" (click)="closeMenu()">Grafo</a>
+        <a routerLink="/progresso" routerLinkActive="active" (click)="closeMenu()">Meu Progresso</a>
+        <a routerLink="/eletiva" routerLinkActive="active" (click)="closeMenu()">Buscar Eletiva</a>
+        <a routerLink="/rea" routerLinkActive="active" (click)="closeMenu()">REA</a>
+        <a routerLink="/duvidas" routerLinkActive="active" (click)="closeMenu()">Dúvidas</a>
+        @if (isCoordenacao()) {
+          <a routerLink="/coordenacao" routerLinkActive="active" (click)="closeMenu()">Coordenação</a>
+        }
+      </nav>
+
+      <div class="navbar__user" [class.is-open]="menuOpen()">
+        <span class="navbar__email" [title]="label()">{{ label() }}</span>
+        <app-botao variant="outline" (clicked)="logout()">Sair</app-botao>
+      </div>
+    </div>
+  </header>
+}
