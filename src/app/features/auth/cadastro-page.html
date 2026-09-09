@@ -1,0 +1,77 @@
+<div class="auth-screen">
+  <div class="auth-wrap">
+    <h1 class="logo-wordmark auth-logo">Malha<span class="accent">IA</span></h1>
+    <app-card title="Criar conta" subtitle="Monte sua trajetória acadêmica com inteligência">
+      <form class="auth-form" (ngSubmit)="submit()">
+        <app-input
+          label="Nome completo"
+          name="nome"
+          autocomplete="name"
+          placeholder="Seu nome"
+          [(value)]="nome"
+        />
+        <app-input
+          label="E-mail"
+          type="email"
+          name="email"
+          autocomplete="email"
+          placeholder="seu@email.com"
+          [required]="true"
+          [(value)]="email"
+        />
+        <app-input
+          label="Senha"
+          type="password"
+          name="senha"
+          autocomplete="new-password"
+          placeholder="••••••••"
+          [required]="true"
+          [(value)]="senha"
+        />
+        <app-input
+          label="Confirmar senha"
+          type="password"
+          name="confirmar"
+          autocomplete="new-password"
+          placeholder="••••••••"
+          [required]="true"
+          [(value)]="confirmarSenha"
+        />
+
+        <div>
+          <p class="papel-label">Papel</p>
+          <div class="papel-grid">
+            <button
+              type="button"
+              class="papel-card"
+              [class.selected]="papel() === 'ALUNO'"
+              (click)="selecionarPapel('ALUNO')"
+            >
+              Aluno
+              <small>Acompanhar progresso e REA</small>
+            </button>
+            <button
+              type="button"
+              class="papel-card"
+              [class.selected]="papel() === 'COORDENACAO'"
+              (click)="selecionarPapel('COORDENACAO')"
+            >
+              Coordenação
+              <small>Gerir oferta semestral</small>
+            </button>
+          </div>
+        </div>
+
+        @if (erro()) {
+          <p class="auth-error">{{ erro() }}</p>
+        }
+
+        <app-botao type="submit" variant="accent" [loading]="loading()">Cadastrar</app-botao>
+      </form>
+      <p class="auth-footer">
+        Já tem conta?
+        <a routerLink="/login">Entrar</a>
+      </p>
+    </app-card>
+  </div>
+</div>

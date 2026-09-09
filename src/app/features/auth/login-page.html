@@ -1,0 +1,37 @@
+<div class="auth-screen">
+  <div class="auth-wrap">
+    <h1 class="logo-wordmark auth-logo">Malha<span class="accent">IA</span></h1>
+    <app-card title="Entrar" subtitle="Acesse sua malha curricular inteligente">
+      <form class="auth-form" (ngSubmit)="submit()">
+        <app-input
+          label="E-mail"
+          type="email"
+          name="email"
+          autocomplete="email"
+          placeholder="seu@email.com"
+          [required]="true"
+          [(value)]="email"
+        />
+        <app-input
+          label="Senha"
+          type="password"
+          name="senha"
+          autocomplete="current-password"
+          placeholder="••••••••"
+          [required]="true"
+          [(value)]="senha"
+        />
+
+        @if (erro()) {
+          <p class="auth-error">{{ erro() }}</p>
+        }
+
+        <app-botao type="submit" variant="accent" [loading]="loading()">Entrar</app-botao>
+      </form>
+      <p class="auth-footer">
+        Não tem conta?
+        <a routerLink="/cadastro">Cadastre-se</a>
+      </p>
+    </app-card>
+  </div>
+</div>
