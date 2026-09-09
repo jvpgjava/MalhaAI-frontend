@@ -20,7 +20,6 @@ export class EletivaPage implements OnInit {
 
   readonly disciplinas = signal<Disciplina[]>([]);
   readonly arestas = signal<{ preRequisitoId: number; disciplinaId: number }[]>([]);
-  readonly caminhoCriticoIds = signal<number[]>([]);
   readonly destinoId = signal<number | null>(null);
   readonly rota = signal<number[]>([]);
   readonly loading = signal(true);
@@ -31,16 +30,20 @@ export class EletivaPage implements OnInit {
     [...this.disciplinas()].sort((a, b) => a.nome.localeCompare(b.nome)),
   );
 
+  /** Nomes da rota buscada (não o caminho crítico do currículo). */
+  readonly rotaNomes = computed(() => {
+    const byId = new Map(this.disciplinas().map((d) => [d.id, d.nome]));
+    return this.rota()
+      .map((id) => byId.get(id) ?? String(id))
+      .join(' → ');
+  });
+
   async ngOnInit(): Promise<void> {
     this.loading.set(true);
     try {
-      const [grafo, critico] = await Promise.all([
-        this.grafoService.getGrafo(),
-        this.grafoService.getCaminhoCritico(),
-      ]);
+      const grafo = await this.grafoService.getGrafo();
       this.disciplinas.set(grafo.disciplinas);
       this.arestas.set(grafo.arestas);
-      this.caminhoCriticoIds.set(critico.caminhoCriticoIds);
     } catch {
       this.erro.set('Não foi possível carregar o grafo.');
     } finally {
@@ -52,6 +55,7 @@ export class EletivaPage implements OnInit {
     const value = (event.target as HTMLSelectElement).value;
     const id = Number(value);
     this.destinoId.set(Number.isFinite(id) && value !== '' ? id : null);
+    this.rota.set([]);
   }
 
   async buscar(): Promise<void> {

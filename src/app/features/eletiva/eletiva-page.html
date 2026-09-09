@@ -2,7 +2,9 @@
   <header class="page-header">
     <div>
       <h1 class="page-title">Buscar Eletiva</h1>
-      <p class="page-subtitle">Escolha um destino e veja a rota de pré-requisitos destacada.</p>
+      <p class="page-subtitle">
+        Escolha um destino e veja o menor caminho de pré-requisitos até ele (não o caminho crítico do currículo).
+      </p>
     </div>
   </header>
 
@@ -35,12 +37,17 @@
       <app-grafo-mapa
         [disciplinas]="disciplinas()"
         [arestas]="arestas()"
-        [caminhoCriticoIds]="caminhoCriticoIds()"
+        [caminhoCriticoIds]="[]"
         [rotaDestacada]="rota()"
+        [selecionadaId]="destinoId()"
+        [animar]="false"
+        [animarRota]="rota().length > 0"
       />
     </div>
     @if (rota().length) {
-      <p class="rota-info">Rota: {{ rota().join(' → ') }}</p>
+      <p class="rota-info">Rota até o destino: {{ rotaNomes() }}</p>
+    } @else {
+      <p class="rota-info">Nenhuma rota destacada ainda — selecione o destino e clique em Buscar caminho.</p>
     }
   }
 </div>

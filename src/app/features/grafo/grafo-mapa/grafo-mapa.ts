@@ -29,8 +29,10 @@ export class GrafoMapaComponent {
   readonly caminhoCriticoIds = input<number[]>([]);
   readonly rotaDestacada = input<number[]>([]);
   readonly selecionadaId = input<number | null>(null);
-  /** Quando true, revela colunas → arestas → caminho crítico em sequência. */
+  /** Revela colunas → arestas → caminho crítico (tela do grafo). */
   readonly animar = input(true);
+  /** Acende a rota buscada nó a nó / aresta a aresta (tela eletiva). */
+  readonly animarRota = input(false);
 
   readonly disciplinaSelecionada = output<Disciplina>();
 
@@ -52,12 +54,14 @@ export class GrafoMapaComponent {
       const rota = this.rotaDestacada();
       const selecionada = this.selecionadaId();
       const animar = this.animar();
+      const animarRota = this.animarRota();
 
       const signature = [
         disciplinas.map((d) => d.id).join(','),
         arestas.map((a) => `${a.preRequisitoId}->${a.disciplinaId}`).join(','),
         criticos.join(','),
         rota.join(','),
+        String(animarRota),
       ].join('|');
 
       const estruturaMudou = signature !== this.lastSignature;
@@ -69,9 +73,10 @@ export class GrafoMapaComponent {
         disciplinas,
         arestas,
         new Set(criticos),
-        new Set(rota),
+        rota,
         selecionada,
-        animar && estruturaMudou,
+        animar && estruturaMudou && !animarRota,
+        animarRota && rota.length > 0 && estruturaMudou,
       );
     });
 
@@ -94,9 +99,10 @@ export class GrafoMapaComponent {
     disciplinas: Disciplina[],
     arestas: Aresta[],
     criticos: Set<number>,
-    rota: Set<number>,
+    rotaOrdem: number[],
     selecionada: number | null,
-    animar: boolean,
+    animarGrafo: boolean,
+    animarRota: boolean,
   ): void {
     const svg = d3.select(svgEl);
     svg.selectAll('*').remove();
@@ -108,6 +114,7 @@ export class GrafoMapaComponent {
 
     const layout = calcularLayoutGrafo(disciplinas);
     const byId = new Map(layout.map((p) => [p.id, p]));
+    const rota = new Set(rotaOrdem);
 
     const maxX = Math.max(...layout.map((p) => p.x)) + 120;
     const maxY = Math.max(...layout.map((p) => p.y)) + 80;
@@ -124,25 +131,30 @@ export class GrafoMapaComponent {
     const colorWarn = styles.getPropertyValue('--color-warn').trim() || '#e8914b';
 
     const g = svg.append('g');
+    const defs = svg.append('defs');
 
-    svg
-      .append('defs')
-      .append('marker')
-      .attr('id', 'arrow')
-      .attr('viewBox', '0 -5 10 10')
-      .attr('refX', 18)
-      .attr('refY', 0)
-      .attr('markerWidth', 6)
-      .attr('markerHeight', 6)
-      .attr('orient', 'auto')
-      .append('path')
-      .attr('d', 'M0,-5L10,0L0,5')
-      .attr('fill', colorBorder);
+    const addMarker = (id: string, fill: string) => {
+      defs
+        .append('marker')
+        .attr('id', id)
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 18)
+        .attr('refY', 0)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,-5L10,0L0,5')
+        .attr('fill', fill);
+    };
+    addMarker('arrow', colorBorder);
+    addMarker('arrow-rota', colorWarn);
 
     const arestasValidas = arestas.filter(
       (a) => byId.has(a.preRequisitoId) && byId.has(a.disciplinaId),
     );
 
+    const esconderInicial = animarGrafo;
     const edgeSel = g
       .selectAll('line.edge')
       .data(arestasValidas)
@@ -156,7 +168,7 @@ export class GrafoMapaComponent {
       .attr('stroke', colorBorder)
       .attr('stroke-width', 1.5)
       .attr('marker-end', 'url(#arrow)')
-      .attr('opacity', animar ? 0 : 1);
+      .attr('opacity', esconderInicial ? 0 : 1);
 
     const nodes = g
       .selectAll('g.node')
@@ -169,12 +181,12 @@ export class GrafoMapaComponent {
         return `translate(${p.x},${p.y})`;
       })
       .style('cursor', 'pointer')
-      .attr('opacity', animar ? 0 : 1)
+      .attr('opacity', esconderInicial ? 0 : 1)
       .on('click', (_event, d) => this.disciplinaSelecionada.emit(d));
 
     nodes
       .append('circle')
-      .attr('r', 0)
+      .attr('r', esconderInicial ? 0 : 18)
       .attr('fill', colorTeal)
       .attr('stroke', '#ffffff')
       .attr('stroke-width', 2);
@@ -187,7 +199,7 @@ export class GrafoMapaComponent {
       .attr('fill', '#fff')
       .attr('font-size', '10px')
       .attr('font-weight', '700')
-      .attr('opacity', 0)
+      .attr('opacity', esconderInicial ? 0 : 1)
       .text((d) => (d.nome.length <= 8 ? d.nome : `${d.nome.slice(0, 7)}…`));
 
     nodes
@@ -198,7 +210,7 @@ export class GrafoMapaComponent {
       .attr('fill', colorInk)
       .attr('font-size', '11px')
       .attr('font-weight', '600')
-      .attr('opacity', 0)
+      .attr('opacity', esconderInicial ? 0 : 1)
       .each(function (d) {
         const el = d3.select(this);
         const words = d.nome.split(/\s+/);
@@ -228,8 +240,17 @@ export class GrafoMapaComponent {
       return criticos.has(d.id) ? colorAccent : colorTeal;
     };
 
+    const isArestaRota = (a: Aresta, ateIndice: number): boolean => {
+      for (let i = 0; i < ateIndice; i++) {
+        if (rotaOrdem[i] === a.preRequisitoId && rotaOrdem[i + 1] === a.disciplinaId) {
+          return true;
+        }
+      }
+      return false;
+    };
+
     const corAresta = (a: Aresta): string => {
-      if (rota.has(a.preRequisitoId) && rota.has(a.disciplinaId)) {
+      if (rota.has(a.preRequisitoId) && rota.has(a.disciplinaId) && isArestaRota(a, rotaOrdem.length - 1)) {
         return colorWarn;
       }
       if (criticos.has(a.preRequisitoId) && criticos.has(a.disciplinaId)) {
@@ -240,9 +261,31 @@ export class GrafoMapaComponent {
 
     const larguraAresta = (a: Aresta): number => {
       const destaque =
-        (rota.has(a.preRequisitoId) && rota.has(a.disciplinaId)) ||
+        (rota.has(a.preRequisitoId) && rota.has(a.disciplinaId) && isArestaRota(a, rotaOrdem.length - 1)) ||
         (criticos.has(a.preRequisitoId) && criticos.has(a.disciplinaId));
-      return destaque ? 3 : 1.5;
+      return destaque ? 3.5 : 1.5;
+    };
+
+    const pintarNo = (id: number, destaque: boolean) => {
+      nodes
+        .filter((d) => d.id === id)
+        .select('circle')
+        .transition()
+        .duration(320)
+        .attr('fill', destaque ? colorWarn : colorTeal)
+        .attr('r', selecionada === id ? 22 : destaque ? 20 : 18)
+        .attr('stroke', selecionada === id ? colorInk : '#ffffff')
+        .attr('stroke-width', selecionada === id ? 3 : 2);
+    };
+
+    const pintarAresta = (from: number, to: number) => {
+      edgeSel
+        .filter((a) => a.preRequisitoId === from && a.disciplinaId === to)
+        .transition()
+        .duration(380)
+        .attr('stroke', colorWarn)
+        .attr('stroke-width', 3.5)
+        .attr('marker-end', 'url(#arrow-rota)');
     };
 
     const aplicarEstadoFinal = (): void => {
@@ -257,15 +300,35 @@ export class GrafoMapaComponent {
       edgeSel
         .attr('opacity', 1)
         .attr('stroke', (a) => corAresta(a))
-        .attr('stroke-width', (a) => larguraAresta(a));
+        .attr('stroke-width', (a) => larguraAresta(a))
+        .attr('marker-end', (a) =>
+          corAresta(a) === colorWarn ? 'url(#arrow-rota)' : 'url(#arrow)',
+        );
     };
 
-    if (!animar) {
+    if (animarRota) {
+      // Grafo base já visível; trajeto acende aos poucos
+      nodes.attr('opacity', 1);
+      nodes.select('circle').attr('r', 18).attr('fill', colorTeal);
+      nodes.selectAll('text').attr('opacity', 1);
+      edgeSel.attr('opacity', 1).attr('stroke', colorBorder).attr('stroke-width', 1.5);
+
+      const passoMs = 520;
+      rotaOrdem.forEach((id, i) => {
+        this.agendar(() => pintarNo(id, true), i * passoMs);
+        if (i < rotaOrdem.length - 1) {
+          const next = rotaOrdem[i + 1]!;
+          this.agendar(() => pintarAresta(id, next), i * passoMs + 220);
+        }
+      });
+      return;
+    }
+
+    if (!animarGrafo) {
       aplicarEstadoFinal();
       return;
     }
 
-    // Colunas por semestre, reveladas em sequência
     const porSemestre = new Map<number, Disciplina[]>();
     for (const d of disciplinas) {
       const lista = porSemestre.get(d.semestreSugerido) ?? [];
@@ -316,7 +379,10 @@ export class GrafoMapaComponent {
         .transition()
         .duration(480)
         .attr('stroke', (a) => corAresta(a))
-        .attr('stroke-width', (a) => larguraAresta(a));
+        .attr('stroke-width', (a) => larguraAresta(a))
+        .attr('marker-end', (a) =>
+          corAresta(a) === colorWarn ? 'url(#arrow-rota)' : 'url(#arrow)',
+        );
     }, tCritico);
   }
 }

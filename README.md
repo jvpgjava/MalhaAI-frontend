@@ -83,16 +83,12 @@ Abra no navegador:
 
 **http://localhost:4200**
 
-### Proxy
+### API (sem proxy)
 
-O arquivo `proxy.conf.json` encaminha:
+O front chama o backend direto em `http://localhost:8080` (`environment.apiUrl`).  
+Reinicie o backend com CORS liberando `http://localhost:4200` (já aceita `localhost` em qualquer porta).
 
-| Prefixo no front | Destino |
-|---|---|
-| `/api/*` | `http://localhost:8080` |
-| `/actuator/*` | `http://localhost:8080` |
-
-Se o backend estiver em outra porta (ex.: 8082), edite o `target` nesse arquivo e reinicie o `npm start`.
+Se o backend estiver em outra porta, edite `src/environments/environment.development.ts`.
 
 ---
 
@@ -146,7 +142,7 @@ Se o backend estiver em outra porta (ex.: 8082), edite o `target` nesse arquivo 
 ## 6. Scripts úteis
 
 ```powershell
-npm start                     # desenvolvimento + proxy (porta 4200)
+npm start                     # desenvolvimento (porta 4200 → API em :8080)
 npm run build                 # build de produção → dist/
 npm test -- --watch=false     # testes Vitest (uma vez)
 npx ng version                # versões do Angular/CLI
