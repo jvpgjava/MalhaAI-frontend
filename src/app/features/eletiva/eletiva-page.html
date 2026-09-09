@@ -1,0 +1,46 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Buscar Eletiva</h1>
+      <p class="page-subtitle">Escolha um destino e veja a rota de pré-requisitos destacada.</p>
+    </div>
+  </header>
+
+  <app-card title="Destino">
+    <div class="eletiva-controls">
+      <label class="select-field">
+        <span>Disciplina destino</span>
+        <select
+          [value]="destinoId() ?? ''"
+          (change)="onDestinoChange($event)"
+        >
+          <option value="" disabled>Selecione…</option>
+          @for (d of destinoOptions(); track d.id) {
+            <option [value]="d.id">{{ d.nome }}</option>
+          }
+        </select>
+      </label>
+      <app-botao variant="accent" [loading]="buscando()" [disabled]="loading()" (clicked)="buscar()">
+        Buscar caminho
+      </app-botao>
+    </div>
+  </app-card>
+
+  @if (erro()) {
+    <div class="error-banner">{{ erro() }}</div>
+  }
+
+  @if (!loading()) {
+    <div class="mapa-wrap">
+      <app-grafo-mapa
+        [disciplinas]="disciplinas()"
+        [arestas]="arestas()"
+        [caminhoCriticoIds]="caminhoCriticoIds()"
+        [rotaDestacada]="rota()"
+      />
+    </div>
+    @if (rota().length) {
+      <p class="rota-info">Rota: {{ rota().join(' → ') }}</p>
+    }
+  }
+</div>

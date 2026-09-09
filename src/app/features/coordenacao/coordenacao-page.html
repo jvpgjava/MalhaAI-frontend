@@ -1,0 +1,61 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Coordenação de Oferta</h1>
+      <p class="page-subtitle">Defina vagas e disponibilidade por disciplina no semestre.</p>
+    </div>
+    <app-botao variant="accent" [loading]="saving()" [disabled]="loading()" (clicked)="salvar()">
+      Salvar alterações
+    </app-botao>
+  </header>
+
+  @if (erro()) {
+    <div class="error-banner">{{ erro() }}</div>
+  }
+  @if (sucesso()) {
+    <div class="success-banner">{{ sucesso() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="muted">Carregando…</p>
+  } @else {
+    <form [formGroup]="form">
+      <app-card title="Semestre">
+        <label class="field">
+          <span>Código do semestre</span>
+          <input formControlName="semestre" />
+        </label>
+      </app-card>
+
+      <app-card title="Disciplinas" class="mt">
+        <div class="table-wrap" formArrayName="linhas">
+          <table>
+            <thead>
+              <tr>
+                <th>Disciplina</th>
+                <th>Vagas</th>
+                <th>Ofertada</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (linha of linhas.controls; track $index; let i = $index) {
+                <tr [formGroupName]="i">
+                  <td>{{ linha.controls['nome'].value }}</td>
+                  <td>
+                    <input type="number" min="0" formControlName="vagas" />
+                  </td>
+                  <td>
+                    <label class="toggle">
+                      <input type="checkbox" formControlName="ofertada" />
+                      <span>Ofertar</span>
+                    </label>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </form>
+  }
+</div>

@@ -1,0 +1,44 @@
+.page-subtitle {
+  margin-top: 0.35rem;
+  color: var(--color-muted);
+}
+
+.eletiva-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: end;
+}
+
+.select-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 220px;
+
+  span {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  select {
+    min-height: 44px;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+  }
+}
+
+.mapa-wrap {
+  margin-top: 1.25rem;
+  min-height: 420px;
+}
+
+.rota-info {
+  margin-top: 0.75rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}

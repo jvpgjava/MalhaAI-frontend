@@ -1,0 +1,53 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Painel REA</h1>
+      <p class="page-subtitle">Disciplinas elegíveis ao Regime Especial de Aprendizagem.</p>
+    </div>
+  </header>
+
+  <div class="rea-layout">
+    <div class="rea-layout__main">
+      @if (erro()) {
+        <div class="error-banner">{{ erro() }}</div>
+      }
+
+      @if (loading()) {
+        <p class="muted">Carregando…</p>
+      } @else if (cards().length === 0) {
+        <div class="empty-state">
+          <h2>Nenhuma elegibilidade no momento</h2>
+          <p>Quando houver disciplinas com REA possível, elas aparecerão aqui.</p>
+        </div>
+      } @else {
+        <div class="rea-grid">
+          @for (card of cards(); track card.disciplinaId) {
+            <app-card>
+              <div class="rea-card">
+                <span class="badge badge-warn">{{ card.motivoLabel }}</span>
+                <h3>{{ card.nome }}</h3>
+                <p class="muted">ID {{ card.disciplinaId }}</p>
+                <app-botao variant="outline" [disabled]="true">Solicitar REA</app-botao>
+                <small class="hint">Solicitação online ainda não disponível neste backend.</small>
+              </div>
+            </app-card>
+          }
+        </div>
+      }
+    </div>
+
+    <aside>
+      <app-card title="O que é o REA?">
+        <p class="info-text">
+          O Regime Especial de Aprendizagem (REA) permite cursar disciplinas em situações
+          excepcionais, como quando a oferta regular não está disponível ou há conflito de
+          horário impeditivo.
+        </p>
+        <p class="info-text">
+          Este painel lista elegibilidades detectadas automaticamente com base no seu progresso
+          e na oferta do semestre.
+        </p>
+      </app-card>
+    </aside>
+  </div>
+</div>

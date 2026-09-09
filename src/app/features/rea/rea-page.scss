@@ -1,0 +1,50 @@
+.page-subtitle {
+  margin-top: 0.35rem;
+  color: var(--color-muted);
+}
+
+.muted {
+  color: var(--color-muted);
+}
+
+.rea-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.rea-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.rea-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+
+  h3 {
+    color: var(--color-primary);
+    font-size: 1.05rem;
+  }
+}
+
+.hint {
+  color: var(--color-muted);
+  font-size: 0.75rem;
+}
+
+.info-text {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .rea-layout {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,42 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Meu Progresso</h1>
+      <p class="page-subtitle">Marque as disciplinas já concluídas.</p>
+    </div>
+    <app-botao variant="accent" [loading]="saving()" [disabled]="loading()" (clicked)="salvar()">
+      Salvar progresso
+    </app-botao>
+  </header>
+
+  @if (erro()) {
+    <div class="error-banner">{{ erro() }}</div>
+  }
+  @if (sucesso()) {
+    <div class="success-banner">{{ sucesso() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="muted">Carregando…</p>
+  } @else {
+    <app-card title="Disciplinas">
+      <ul class="disciplina-list">
+        @for (d of disciplinas(); track d.id) {
+          <li>
+            <label class="check-row">
+              <input
+                type="checkbox"
+                [checked]="isConcluida(d.id)"
+                (change)="onToggle(d.id, $event)"
+              />
+              <span>
+                <strong>{{ d.nome }}</strong>
+                <small>Semestre {{ d.semestreSugerido }} · {{ d.cargaHoraria }}h</small>
+              </span>
+            </label>
+          </li>
+        }
+      </ul>
+    </app-card>
+  }
+</div>
