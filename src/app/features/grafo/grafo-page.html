@@ -1,0 +1,71 @@
+<div class="page grafo-page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Grafo Curricular</h1>
+      <p class="page-subtitle">Visualize pré-requisitos e o caminho crítico até a formatura.</p>
+    </div>
+    <span class="badge badge-accent">Total até a formatura: {{ totalExibido() }} semestres</span>
+  </header>
+
+  @if (erro()) {
+    <div class="error-banner">
+      {{ erro() }}
+      <app-botao variant="outline" (clicked)="reload()">Recarregar</app-botao>
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="muted">Carregando grafo…</p>
+  }
+
+  <div class="grafo-layout">
+    <div class="grafo-layout__board">
+      <app-grafo-mapa
+        [disciplinas]="disciplinas()"
+        [arestas]="arestas()"
+        [caminhoCriticoIds]="caminhoCriticoIds()"
+        [selecionadaId]="selecionada()?.id ?? null"
+        (disciplinaSelecionada)="onSelecionar($event)"
+      />
+      <div class="legend">
+        <span><i class="dot critico"></i> Caminho crítico</span>
+        <span><i class="dot normal"></i> Demais disciplinas</span>
+      </div>
+    </div>
+
+    <aside class="grafo-layout__side">
+      <app-card title="Disciplina selecionada">
+        @if (selecionada(); as d) {
+          <h3 class="side-title">{{ d.nome }}</h3>
+          <p class="muted">Semestre sugerido: {{ d.semestreSugerido }}</p>
+          <p class="muted">Carga horária: {{ d.cargaHoraria }}h</p>
+
+          <div class="side-actions">
+            <app-botao
+              variant="accent"
+              [loading]="explicacaoLoading()"
+              (clicked)="carregarExplicacao()"
+            >
+              Ver explicação completa IA
+            </app-botao>
+            <app-botao variant="outline" (clicked)="marcarReprovada()">
+              Marcar como reprovada
+            </app-botao>
+          </div>
+
+          @if (explicacaoErro()) {
+            <p class="error-inline">{{ explicacaoErro() }}</p>
+          }
+          @if (explicacao()) {
+            <div class="explicacao">
+              <h4>Explicação</h4>
+              <p>{{ explicacao() }}</p>
+            </div>
+          }
+        } @else {
+          <p class="muted">Clique em um nó do grafo para ver detalhes.</p>
+        }
+      </app-card>
+    </aside>
+  </div>
+</div>

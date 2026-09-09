@@ -1,0 +1,98 @@
+.page-subtitle {
+  margin-top: 0.35rem;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.muted {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.grafo-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.grafo-layout__board {
+  min-width: 0;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+
+  .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 0.35rem;
+  }
+
+  .critico {
+    background: var(--color-accent);
+  }
+
+  .normal {
+    background: var(--color-teal);
+  }
+}
+
+.side-title {
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.side-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.error-inline {
+  margin-top: 0.75rem;
+  color: var(--color-accent);
+  font-size: 0.875rem;
+}
+
+.explicacao {
+  margin-top: 1rem;
+  padding: 0.85rem;
+  border-radius: var(--radius-control);
+  background: var(--color-soft);
+
+  h4 {
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    margin-bottom: 0.4rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--color-ink);
+    white-space: pre-wrap;
+  }
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+@media (max-width: 960px) {
+  .grafo-layout {
+    grid-template-columns: 1fr;
+  }
+}
