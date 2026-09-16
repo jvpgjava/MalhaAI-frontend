@@ -152,17 +152,24 @@
   }
 
   <div class="grafo-layout">
-    <div class="grafo-layout__board">
+    <div class="grafo-layout__board" [class.is-buscando]="buscando()">
+      @if (buscando()) {
+        <div class="grafo-loading" role="status" aria-live="polite">
+          <span class="grafo-loading__spinner" aria-hidden="true"></span>
+          <p>Buscando melhor caminho…</p>
+          <small>Consultando oferta, RAG e IA — montando um trajeto limpo</small>
+        </div>
+      }
       <app-grafo-mapa
         [disciplinas]="disciplinas()"
         [arestas]="arestas()"
-        [caminhoCriticoIds]="caminhoCriticoIds()"
+        [caminhoCriticoIds]="buscando() ? [] : caminhoCriticoIds()"
         [concluidasIds]="concluidasIds()"
-        [ofertadasIds]="ofertadasIds()"
-        [rotaDestacada]="rotaSemestre()"
-        [selecionadaId]="selecionada()?.id ?? null"
-        [animar]="!orientacao()"
-        [animarRota]="rotaSemestre().length > 0"
+        [ofertadasIds]="buscando() ? [] : ofertadasIds()"
+        [rotaDestacada]="buscando() ? [] : rotaSemestre()"
+        [selecionadaId]="buscando() ? null : (selecionada()?.id ?? null)"
+        [animar]="!buscando() && !orientacao()"
+        [animarRota]="!buscando() && rotaSemestre().length > 0"
         (disciplinaSelecionada)="onSelecionar($event)"
       />
       <div class="legend">

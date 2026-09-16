@@ -127,6 +127,15 @@ export class GrafoPage implements OnInit {
 
     this.buscando.set(true);
     this.orientacaoErro.set(null);
+    // Limpa resultado anterior para não manter trajeto/destaques enquanto carrega
+    this.orientacao.set(null);
+    this.rotaSemestre.set([]);
+    this.caminhoCriticoIds.set([]);
+    this.ofertadasIds.set([]);
+    this.selecionada.set(null);
+    this.explicacao.set(null);
+    this.explicacaoErro.set(null);
+
     try {
       this.semestre.set(canon);
       const res = await this.grafoService.orientar({
@@ -138,7 +147,6 @@ export class GrafoPage implements OnInit {
       this.rotaSemestre.set(res.caminhoIds.map(Number));
       this.caminhoCriticoIds.set(res.caminhoIds.map(Number));
       this.ofertadasIds.set(res.proximasOfertadasIds.map(Number));
-      this.buscando.set(false);
       try {
         const ofertas = await this.ofertaService.listar(canon);
         const concluidas = new Set(this.concluidasIds());
