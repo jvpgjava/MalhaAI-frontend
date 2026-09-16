@@ -1,6 +1,5 @@
 ﻿import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { Disciplina, OrientacaoResponse } from '../../core/models/api.models';
@@ -15,7 +14,7 @@ import { GrafoService } from './grafo.service';
 @Component({
   selector: 'app-grafo-page',
   standalone: true,
-  imports: [FormsModule, GrafoMapaComponent, CardComponent, BotaoComponent, DecimalPipe],
+  imports: [FormsModule, GrafoMapaComponent, CardComponent, BotaoComponent],
   templateUrl: './grafo-page.html',
   styleUrl: './grafo-page.scss',
 })

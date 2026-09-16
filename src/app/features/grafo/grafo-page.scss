@@ -88,13 +88,24 @@
   }
 
   &__resumo {
-    line-height: 1.5;
+    line-height: 1.45;
     color: var(--color-ink);
+    margin-bottom: 0.85rem;
+    font-size: 0.95rem;
   }
 
   &__path {
     margin-top: 0.65rem;
     font-size: 0.92rem;
+  }
+
+  &__disciplinas {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
   ul {
@@ -104,6 +115,53 @@
 
   .alertas {
     color: #9a3412;
+  }
+}
+
+.disc-card {
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 0.55rem;
+
+    h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--color-primary);
+    }
+  }
+
+  &__step {
+    flex-shrink: 0;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--color-accent);
+  }
+
+  &__porque,
+  &__sobre {
+    margin: 0.35rem 0 0;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--color-ink);
+
+    strong {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
   }
 }
 
@@ -125,26 +183,6 @@
   margin: 0.35rem 0 0.65rem;
   font-size: 1.05rem;
   color: var(--color-primary);
-}
-
-.fontes {
-  margin-top: 0.85rem;
-  font-size: 0.85rem;
-
-  summary {
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--color-primary);
-  }
-
-  ul {
-    margin-top: 0.5rem;
-  }
-
-  p {
-    margin: 0.2rem 0 0.55rem;
-    color: var(--color-muted);
-  }
 }
 
 .grafo-layout {

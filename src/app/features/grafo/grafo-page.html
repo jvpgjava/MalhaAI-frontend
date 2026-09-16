@@ -94,9 +94,28 @@
           </p>
         }
         <p class="orientacao__resumo">{{ o.orientacao.resumo }}</p>
-        @if (o.caminhoNomes.length) {
+
+        @if (o.orientacao.disciplinas?.length) {
+          <ol class="orientacao__disciplinas">
+            @for (d of o.orientacao.disciplinas; track d.nome; let i = $index) {
+              <li class="disc-card">
+                <div class="disc-card__head">
+                  <span class="disc-card__step">{{ i + 1 }}</span>
+                  <h3>{{ d.nome }}</h3>
+                </div>
+                <p class="disc-card__porque">
+                  <strong>Por que nessa ordem:</strong> {{ d.porqueNessaOrdem }}
+                </p>
+                <p class="disc-card__sobre">
+                  <strong>Sobre a disciplina:</strong> {{ d.sobre }}
+                </p>
+              </li>
+            }
+          </ol>
+        } @else if (o.caminhoNomes.length) {
           <p class="orientacao__path"><strong>Ordem:</strong> {{ o.caminhoNomes.join(' → ') }}</p>
         }
+
         @if (o.proximasOfertadasNomes.length) {
           <p class="orientacao__path">
             <strong>Neste semestre (ofertadas elegíveis):</strong>
@@ -116,20 +135,6 @@
               <li>{{ a }}</li>
             }
           </ul>
-        }
-        @if (o.fontesConsultadas.length) {
-          <details class="fontes">
-            <summary>Fontes consultadas ({{ o.fontesConsultadas.length }})</summary>
-            <ul>
-              @for (f of o.fontesConsultadas; track f.titulo) {
-                <li>
-                  <strong>{{ f.titulo }}</strong>
-                  <span class="muted"> (sim. {{ f.similaridade | number: '1.2-2' }})</span>
-                  <p>{{ f.trecho }}</p>
-                </li>
-              }
-            </ul>
-          </details>
         }
       </div>
     }

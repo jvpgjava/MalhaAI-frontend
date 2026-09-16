@@ -80,9 +80,16 @@ export interface ExplicacaoResponse {
   explicacao: string;
 }
 
+export interface DisciplinaOrientacao {
+  nome: string;
+  porqueNessaOrdem: string;
+  sobre: string;
+}
+
 export interface OrientacaoEstruturada {
   resumo: string;
   ordemSugerida: string[];
+  disciplinas: DisciplinaOrientacao[];
   proximosPassos: string[];
   alertas: string[];
   estruturado: boolean;
