@@ -7,7 +7,7 @@ import { Disciplina } from '../../core/models/api.models';
 import { BotaoComponent } from '../../ui/botao/botao';
 import { CardComponent } from '../../ui/card/card';
 import { GrafoService } from '../grafo/grafo.service';
-import { CoordenacaoService } from './coordenacao.service';
+import { OfertaService } from './oferta.service';
 
 interface LinhaEstado {
   disciplinaId: number;
@@ -25,7 +25,7 @@ interface LinhaEstado {
 export class CoordenacaoPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly grafoService = inject(GrafoService);
-  private readonly coordenacaoService = inject(CoordenacaoService);
+  private readonly ofertaService = inject(OfertaService);
 
   readonly loading = signal(true);
   readonly saving = signal(false);
@@ -47,22 +47,30 @@ export class CoordenacaoPage implements OnInit {
   async ngOnInit(): Promise<void> {
     this.loading.set(true);
     try {
-      const grafo = await this.grafoService.getGrafo();
+      const semestre = this.form.controls.semestre.value;
+      const [grafo, ofertas] = await Promise.all([
+        this.grafoService.getGrafo(),
+        this.ofertaService.listar(semestre).catch(() => []),
+      ]);
       const ordenadas = [...grafo.disciplinas].sort(
         (a, b) => a.semestreSugerido - b.semestreSugerido || a.nome.localeCompare(b.nome),
       );
       this.disciplinas.set(ordenadas);
       this.linhas.clear();
       this.snapshot = [];
+      const porDisc = new Map(ofertas.map((o) => [Number(o.disciplinaId), o]));
       for (const d of ordenadas) {
+        const oferta = porDisc.get(d.id);
+        const vagas = oferta?.vagas ?? 40;
+        const ofertada = oferta?.ofertada ?? true;
         const group = this.fb.nonNullable.group({
           disciplinaId: d.id,
           nome: d.nome,
-          vagas: [40, [Validators.required, Validators.min(0)]],
-          ofertada: true,
+          vagas: [vagas, [Validators.required, Validators.min(0)]],
+          ofertada,
         });
         this.linhas.push(group);
-        this.snapshot.push({ disciplinaId: d.id, vagas: 40, ofertada: true });
+        this.snapshot.push({ disciplinaId: d.id, vagas, ofertada });
       }
     } catch {
       this.erro.set('Não foi possível carregar as disciplinas.');
@@ -101,7 +109,7 @@ export class CoordenacaoPage implements OnInit {
       await Promise.all(
         alteradas.map((linha) =>
           firstValueFrom(
-            this.coordenacaoService.salvarOferta({
+            this.ofertaService.salvar({
               disciplinaId: linha.disciplinaId,
               semestre,
               vagas: Number(linha.vagas),

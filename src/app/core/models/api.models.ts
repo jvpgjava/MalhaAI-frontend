@@ -80,6 +80,41 @@ export interface ExplicacaoResponse {
   explicacao: string;
 }
 
+export interface OrientacaoEstruturada {
+  resumo: string;
+  ordemSugerida: string[];
+  proximosPassos: string[];
+  alertas: string[];
+  estruturado: boolean;
+}
+
+export interface FonteOrientacao {
+  titulo: string;
+  trecho: string;
+  similaridade: number;
+}
+
+export interface OrientacaoRequest {
+  semestre: string;
+  destinoPrioridadeId?: number | null;
+}
+
+export interface OrientacaoResponse {
+  semestre: string;
+  modo: 'INICIANTE' | 'PRIORIDADE' | string;
+  destinoId: number | null;
+  caminhoIds: number[];
+  caminhoNomes: string[];
+  proximasOfertadasIds: number[];
+  proximasOfertadasNomes: string[];
+  primeiraDisciplinaId: number | null;
+  primeiraDisciplinaNome: string | null;
+  orientacao: OrientacaoEstruturada;
+  iaDisponivel: boolean;
+  roadmapIndexado: boolean;
+  fontesConsultadas: FonteOrientacao[];
+}
+
 export interface FonteDocumento {
   documentoId: number;
   titulo: string;

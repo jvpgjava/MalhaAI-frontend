@@ -3,10 +3,13 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { Disciplina } from '../../core/models/api.models';
+import { SEMESTRE_ATUAL } from '../../core/semestre';
 import { BotaoComponent } from '../../ui/botao/botao';
 import { CardComponent } from '../../ui/card/card';
+import { OfertaService } from '../coordenacao/oferta.service';
 import { GrafoMapaComponent } from '../grafo/grafo-mapa/grafo-mapa';
 import { GrafoService } from '../grafo/grafo.service';
+import { ProgressoService } from '../progresso/progresso.service';
 
 @Component({
   selector: 'app-eletiva-page',
@@ -17,9 +20,13 @@ import { GrafoService } from '../grafo/grafo.service';
 })
 export class EletivaPage implements OnInit {
   private readonly grafoService = inject(GrafoService);
+  private readonly progressoService = inject(ProgressoService);
+  private readonly ofertaService = inject(OfertaService);
 
   readonly disciplinas = signal<Disciplina[]>([]);
   readonly arestas = signal<{ preRequisitoId: number; disciplinaId: number }[]>([]);
+  readonly concluidasIds = signal<number[]>([]);
+  readonly ofertadasIds = signal<number[]>([]);
   readonly destinoId = signal<number | null>(null);
   readonly rota = signal<number[]>([]);
   readonly loading = signal(true);
@@ -27,10 +34,11 @@ export class EletivaPage implements OnInit {
   readonly erro = signal<string | null>(null);
 
   readonly destinoOptions = computed(() =>
-    [...this.disciplinas()].sort((a, b) => a.nome.localeCompare(b.nome)),
+    [...this.disciplinas()]
+      .filter((d) => !this.concluidasIds().includes(d.id))
+      .sort((a, b) => a.nome.localeCompare(b.nome)),
   );
 
-  /** Nomes da rota buscada (não o caminho crítico do currículo). */
   readonly rotaNomes = computed(() => {
     const byId = new Map(this.disciplinas().map((d) => [d.id, d.nome]));
     return this.rota()
@@ -41,9 +49,24 @@ export class EletivaPage implements OnInit {
   async ngOnInit(): Promise<void> {
     this.loading.set(true);
     try {
-      const grafo = await this.grafoService.getGrafo();
+      const [grafo, progresso, ofertas] = await Promise.all([
+        this.grafoService.getGrafo(),
+        this.progressoService.getProgresso(),
+        this.ofertaService.listar(SEMESTRE_ATUAL),
+      ]);
       this.disciplinas.set(grafo.disciplinas);
       this.arestas.set(grafo.arestas);
+      const concluidas = (
+        Array.isArray(progresso.disciplinasConcluidas)
+          ? progresso.disciplinasConcluidas
+          : [...(progresso.disciplinasConcluidas as unknown as number[])]
+      ).map(Number);
+      this.concluidasIds.set(concluidas);
+      this.ofertadasIds.set(
+        ofertas
+          .filter((o) => o.ofertada && !concluidas.includes(Number(o.disciplinaId)))
+          .map((o) => Number(o.disciplinaId)),
+      );
     } catch {
       this.erro.set('Não foi possível carregar o grafo.');
     } finally {
@@ -67,6 +90,8 @@ export class EletivaPage implements OnInit {
     this.buscando.set(true);
     this.erro.set(null);
     try {
+      // Sem filtrar o grafo por oferta: progresso do aluno já entra no Dijkstra.
+      // Ofertadas aparecem no mapa para o aluno ver o que dá para pegar no semestre.
       const res = await this.grafoService.getCaminho(destino);
       this.rota.set(res.caminho);
     } catch (err) {

@@ -1,7 +1,7 @@
 @if (isAuthenticated()) {
   <header class="navbar">
     <div class="navbar__inner">
-      <a class="navbar__brand logo-wordmark" routerLink="/grafo" (click)="closeMenu()">
+      <a class="navbar__brand" routerLink="/grafo" (click)="closeMenu()">
         Malha<span class="accent">IA</span>
       </a>
 
@@ -22,7 +22,6 @@
         <a routerLink="/progresso" routerLinkActive="active" (click)="closeMenu()">Meu Progresso</a>
         <a routerLink="/eletiva" routerLinkActive="active" (click)="closeMenu()">Buscar Eletiva</a>
         <a routerLink="/rea" routerLinkActive="active" (click)="closeMenu()">REA</a>
-        <a routerLink="/duvidas" routerLinkActive="active" (click)="closeMenu()">Dúvidas</a>
         @if (isCoordenacao()) {
           <a routerLink="/coordenacao" routerLinkActive="active" (click)="closeMenu()">Coordenação</a>
         }

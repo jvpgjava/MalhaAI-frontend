@@ -1,6 +1,6 @@
 # MalhaIA — Frontend
 
-Interface Angular do planejador de grade curricular: grafo de pré-requisitos com animação, caminho crítico, progresso do aluno, busca até eletiva, REA, oferta da coordenação e chat de dúvidas institucionais (RAG).
+Interface Angular do planejador de grade curricular: grafo de pré-requisitos com animação, caminho crítico restante conforme progresso, busca até eletiva, REA e oferta da coordenação.
 
 Visual baseado no Figma: [MalhaAI](https://www.figma.com/design/UMB3ZL7zhBwvhqQYOxSTFT/MalhaAI).  
 Planejamento das fases: [`README_FRONTEND.md`](README_FRONTEND.md).  
@@ -39,7 +39,7 @@ O frontend **não** fala com Abacus/Gemini direto. Suba o backend antes:
 2. Backend padrão: `http://localhost:8080`.
 3. Health: `http://localhost:8080/actuator/health` deve retornar `UP`.
 
-Para explicação IA e chat RAG, configure no backend (PowerShell **antes** do `mvn spring-boot:run`):
+Para explicação IA, configure no backend (PowerShell **antes** do `mvn spring-boot:run`):
 
 ```powershell
 $env:ABACUS_API_KEY = "sua_chave_abacus"          # ou ABACUSAI_API_KEY
@@ -99,7 +99,7 @@ Se o backend estiver em outra porta, edite `src/environments/environment.develop
 3. Preencha e-mail, senha e escolha **Sou Aluno** ou **Coordenação**.
    - O campo “Nome completo” é só visual; o backend recebe `email`, `senha` e `papel`.
 4. Após o cadastro/login você cai em `/grafo`.
-5. O grafo anima: colunas por semestre → arestas → caminho crítico em destaque.
+5. O grafo anima o caminho restante (progresso) e destaca ofertadas do semestre.
 
 ### Contas de teste (se já existirem no banco)
 
@@ -110,12 +110,6 @@ Se o backend estiver em outra porta, edite `src/environments/environment.develop
 
 (Criadas durante os testes locais; se não existirem, cadastre pela UI.)
 
-### Ativar RAG (coordenação)
-
-1. Entre com papel `COORDENACAO`.
-2. No Swagger do backend ou via HTTP: `POST /api/documentos/indexar` (com JWT).
-3. No front, abra `/duvidas` e pergunte algo sobre REA / regimento.
-
 ---
 
 ## 5. Rotas da aplicação
@@ -124,11 +118,10 @@ Se o backend estiver em outra porta, edite `src/environments/environment.develop
 |---|---|---|
 | `/login` | público | Login JWT |
 | `/cadastro` | público | Cadastro ALUNO / COORDENACAO |
-| `/grafo` | autenticado | Grafo D3 + crítico + reprovação + explicação IA |
+| `/grafo` | autenticado | Grafo + caminho restante + oferta do semestre |
 | `/progresso` | autenticado | Marcar disciplinas concluídas |
 | `/eletiva` | autenticado | Menor caminho até uma disciplina |
 | `/rea` | autenticado | Disciplinas elegíveis ao REA |
-| `/duvidas` | autenticado | Chat RAG (normas) |
 | `/coordenacao` | só `COORDENACAO` | Oferta / vagas por semestre |
 
 - Usuário deslogado em rota protegida → `/login`.
@@ -168,7 +161,6 @@ src/app/
     eletiva/
     rea/
     coordenacao/
-    duvidas/
 ```
 
 ---
@@ -181,7 +173,7 @@ src/app/
 | Tela branca / erros de API no console | Backend `UP`? Proxy apontando para a porta certa? |
 | Sempre volta para `/login` | JWT só em memória — faça login de novo após refresh |
 | `403` em Coordenação | Conta precisa ser `COORDENACAO` |
-| Explicação / Dúvidas com erro 503 | Chaves Abacus/Gemini no **backend**, não no front |
+| Explicação IA com erro 503 | Chaves Abacus/Gemini no **backend**, não no front |
 | Grafo não anima / não carrega | Confirme `GET /api/grafo` com token no Network do DevTools |
 | CORS no browser | `FRONTEND_ORIGIN=http://localhost:4200` no backend |
 

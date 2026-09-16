@@ -1,7 +1,17 @@
 <div class="auth-screen">
   <div class="auth-wrap">
-    <h1 class="logo-wordmark auth-logo">Malha<span class="accent">IA</span></h1>
-    <app-card title="Criar conta" subtitle="Monte sua trajetória acadêmica com inteligência">
+    <header class="auth-brand">
+      <p class="auth-kicker">Planejador curricular</p>
+      <h1 class="auth-logo">Malha<span class="accent">IA</span></h1>
+      <p class="auth-tagline">Monte sua trajetória com clareza</p>
+    </header>
+
+    <section class="auth-panel" aria-labelledby="cadastro-title">
+      <header class="auth-panel__header">
+        <h2 id="cadastro-title">Criar conta</h2>
+        <p>Leva menos de um minuto para começar</p>
+      </header>
+
       <form class="auth-form" (ngSubmit)="submit()">
         <app-input
           label="Nome completo"
@@ -48,7 +58,7 @@
               (click)="selecionarPapel('ALUNO')"
             >
               Aluno
-              <small>Acompanhar progresso e REA</small>
+              <small>Progresso, grafo e REA</small>
             </button>
             <button
               type="button"
@@ -57,21 +67,32 @@
               (click)="selecionarPapel('COORDENACAO')"
             >
               Coordenação
-              <small>Gerir oferta semestral</small>
+              <small>Oferta do semestre</small>
             </button>
           </div>
         </div>
 
         @if (erro()) {
-          <p class="auth-error">{{ erro() }}</p>
+          <p class="auth-error" role="alert">{{ erro() }}</p>
         }
 
-        <app-botao type="submit" variant="accent" [loading]="loading()">Cadastrar</app-botao>
+        <div class="auth-form__actions">
+          <app-botao
+            type="submit"
+            variant="accent"
+            [fullWidth]="true"
+            [loading]="loading()"
+            [disabled]="loading()"
+          >
+            Cadastrar
+          </app-botao>
+        </div>
       </form>
+
       <p class="auth-footer">
         Já tem conta?
         <a routerLink="/login">Entrar</a>
       </p>
-    </app-card>
+    </section>
   </div>
 </div>

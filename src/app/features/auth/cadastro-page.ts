@@ -7,13 +7,12 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 import { Papel } from '../../core/auth/auth.models';
 import { BotaoComponent } from '../../ui/botao/botao';
-import { CardComponent } from '../../ui/card/card';
-import { InputComponent } from '../../ui/input/input';
+import { InputComponent, isEmailValido, mascararEmail } from '../../ui/input/input';
 
 @Component({
   selector: 'app-cadastro-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, BotaoComponent, CardComponent, InputComponent],
+  imports: [FormsModule, RouterLink, BotaoComponent, InputComponent],
   templateUrl: './cadastro-page.html',
   styleUrl: './cadastro-page.scss',
 })
@@ -35,7 +34,13 @@ export class CadastroPage {
 
   async submit(): Promise<void> {
     this.erro.set(null);
+    const email = mascararEmail(this.email());
+    this.email.set(email);
 
+    if (!isEmailValido(email)) {
+      this.erro.set('Informe um e-mail válido (ex.: nome@dominio.com).');
+      return;
+    }
     if (this.senha() !== this.confirmarSenha()) {
       this.erro.set('As senhas não coincidem.');
       return;
@@ -50,7 +55,7 @@ export class CadastroPage {
       await firstValueFrom(
         this.auth.cadastro(
           {
-            email: this.email().trim(),
+            email,
             senha: this.senha(),
             papel: this.papel(),
           },

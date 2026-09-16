@@ -2,10 +2,138 @@
   <header class="page-header">
     <div>
       <h1 class="page-title">Grafo Curricular</h1>
-      <p class="page-subtitle">Visualize pré-requisitos e o caminho crítico até a formatura.</p>
+      <p class="page-subtitle">
+        Informe o semestre ofertado e busque o melhor caminho: o sistema escolhe o que cursar
+        primeiro entre as disciplinas liberadas, consulta fontes confiáveis/RAG e salva o roadmap
+        para as próximas consultas dos alunos.
+      </p>
     </div>
-    <span class="badge badge-accent">Total até a formatura: {{ totalExibido() }} semestres</span>
+    <span class="badge badge-accent">
+      Restante: {{ totalExibido() }}
+      {{ totalExibido() === 1 ? 'semestre' : 'semestres' }}
+    </span>
   </header>
+
+  <app-card title="Buscar trajeto">
+    <div class="busca-grid">
+      <label class="field">
+        <span>Semestre (2025.1 ou 2025/1)</span>
+        <input
+          list="semestres-list"
+          [value]="semestreInput()"
+          (input)="onSemestreChange($event)"
+          placeholder="2026.1"
+        />
+        <datalist id="semestres-list">
+          @for (s of semestresOpcoes(); track s) {
+            <option [value]="s"></option>
+          }
+        </datalist>
+      </label>
+
+      <div class="modo-toggle">
+        <span>Perfil</span>
+        <div class="modo-toggle__btns">
+          <button
+            type="button"
+            [class.active]="modoBusca() === 'INICIANTE'"
+            (click)="onModoChange('INICIANTE')"
+          >
+            Iniciante / sem prioridade
+          </button>
+          <button
+            type="button"
+            [class.active]="modoBusca() === 'PRIORIDADE'"
+            (click)="onModoChange('PRIORIDADE')"
+          >
+            Disciplina prioritária
+          </button>
+        </div>
+      </div>
+
+      @if (modoBusca() === 'PRIORIDADE') {
+        <label class="field">
+          <span>Disciplina prioritária</span>
+          <select [value]="prioridadeId() ?? ''" (change)="onPrioridadeChange($event)">
+            <option value="" disabled>Selecione…</option>
+            @for (d of prioridadesOptions(); track d.id) {
+              <option [value]="d.id">{{ d.nome }}</option>
+            }
+          </select>
+        </label>
+      }
+
+      <div class="busca-actions">
+        <app-botao variant="outline" [disabled]="loading()" (clicked)="aplicarSemestre()">
+          Aplicar semestre
+        </app-botao>
+        <app-botao variant="accent" [loading]="buscando()" [disabled]="loading()" (clicked)="buscarMelhorCaminho()">
+          Buscar melhor caminho
+        </app-botao>
+      </div>
+    </div>
+
+    @if (orientacaoErro()) {
+      <p class="error-inline">{{ orientacaoErro() }}</p>
+    }
+
+    @if (orientacao(); as o) {
+      <div class="orientacao">
+        <p class="orientacao__meta">
+          Semestre {{ o.semestre }} · modo {{ o.modo }}
+          @if (!o.iaDisponivel) {
+            <span class="pill">sem IA — trajeto determinístico</span>
+          }
+          @if (o.roadmapIndexado) {
+            <span class="pill pill--ok">salvo no RAG</span>
+          }
+        </p>
+        @if (o.primeiraDisciplinaNome) {
+          <p class="orientacao__primeira">
+            Comece por: <strong>{{ o.primeiraDisciplinaNome }}</strong>
+          </p>
+        }
+        <p class="orientacao__resumo">{{ o.orientacao.resumo }}</p>
+        @if (o.caminhoNomes.length) {
+          <p class="orientacao__path"><strong>Ordem:</strong> {{ o.caminhoNomes.join(' → ') }}</p>
+        }
+        @if (o.proximasOfertadasNomes.length) {
+          <p class="orientacao__path">
+            <strong>Neste semestre (ofertadas elegíveis):</strong>
+            {{ o.proximasOfertadasNomes.join(', ') }}
+          </p>
+        }
+        @if (o.orientacao.proximosPassos.length) {
+          <ul>
+            @for (p of o.orientacao.proximosPassos; track p) {
+              <li>{{ p }}</li>
+            }
+          </ul>
+        }
+        @if (o.orientacao.alertas.length) {
+          <ul class="alertas">
+            @for (a of o.orientacao.alertas; track a) {
+              <li>{{ a }}</li>
+            }
+          </ul>
+        }
+        @if (o.fontesConsultadas.length) {
+          <details class="fontes">
+            <summary>Fontes consultadas ({{ o.fontesConsultadas.length }})</summary>
+            <ul>
+              @for (f of o.fontesConsultadas; track f.titulo) {
+                <li>
+                  <strong>{{ f.titulo }}</strong>
+                  <span class="muted"> (sim. {{ f.similaridade | number: '1.2-2' }})</span>
+                  <p>{{ f.trecho }}</p>
+                </li>
+              }
+            </ul>
+          </details>
+        }
+      </div>
+    }
+  </app-card>
 
   @if (erro()) {
     <div class="error-banner">
@@ -24,12 +152,20 @@
         [disciplinas]="disciplinas()"
         [arestas]="arestas()"
         [caminhoCriticoIds]="caminhoCriticoIds()"
+        [concluidasIds]="concluidasIds()"
+        [ofertadasIds]="ofertadasIds()"
+        [rotaDestacada]="rotaSemestre()"
         [selecionadaId]="selecionada()?.id ?? null"
+        [animar]="!orientacao()"
+        [animarRota]="rotaSemestre().length > 0"
         (disciplinaSelecionada)="onSelecionar($event)"
       />
       <div class="legend">
-        <span><i class="dot critico"></i> Caminho crítico</span>
-        <span><i class="dot normal"></i> Demais disciplinas</span>
+        <span><i class="dot critico"></i> Caminho restante</span>
+        <span><i class="dot oferta"></i> Ofertada em {{ semestre() }}</span>
+        <span><i class="dot rota"></i> Trajeto buscado</span>
+        <span><i class="dot feita"></i> Já concluída</span>
+        <span><i class="dot normal"></i> Demais</span>
       </div>
     </div>
 
@@ -39,6 +175,11 @@
           <h3 class="side-title">{{ d.nome }}</h3>
           <p class="muted">Semestre sugerido: {{ d.semestreSugerido }}</p>
           <p class="muted">Carga horária: {{ d.cargaHoraria }}h</p>
+          @if (concluidasIds().includes(d.id)) {
+            <p class="status status--feita">Concluída</p>
+          } @else if (ofertadasIds().includes(d.id)) {
+            <p class="status status--oferta">Ofertada em {{ semestre() }}</p>
+          }
 
           <div class="side-actions">
             <app-botao

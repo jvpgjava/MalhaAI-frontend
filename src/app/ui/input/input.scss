@@ -15,6 +15,13 @@
   color: var(--color-primary);
 }
 
+.ui-input__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 .ui-input__control {
   width: 100%;
   min-height: 44px;
@@ -26,13 +33,57 @@
   outline: none;
 }
 
+.ui-input__control--with-toggle {
+  padding-right: 2.75rem;
+}
+
 .ui-input__control:focus {
   border-color: var(--color-teal);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-teal) 18%, transparent);
+}
+
+.ui-input__field--invalid .ui-input__control {
+  border-color: color-mix(in srgb, var(--color-accent) 70%, var(--color-border));
+}
+
+.ui-input__field--invalid .ui-input__control:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 16%, transparent);
 }
 
 .ui-input__control:disabled {
   background: var(--color-soft);
   cursor: not-allowed;
+}
+
+.ui-input__toggle {
+  position: absolute;
+  right: 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: calc(var(--radius-control) - 2px);
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+
+  svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-soft);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-teal);
+    outline-offset: 1px;
+  }
 }
 
 .ui-input__error {

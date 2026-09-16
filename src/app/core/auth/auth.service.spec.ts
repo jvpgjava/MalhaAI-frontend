@@ -9,6 +9,7 @@ describe('AuthService', () => {
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
+    sessionStorage.clear();
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
@@ -18,9 +19,10 @@ describe('AuthService', () => {
 
   afterEach(() => {
     httpMock.verify();
+    sessionStorage.clear();
   });
 
-  it('guarda token em signal (memória) após login', async () => {
+  it('guarda token em signal e sessionStorage após login', async () => {
     expect(service.token()).toBeNull();
     expect(service.isAuthenticated()).toBe(false);
 
@@ -41,9 +43,10 @@ describe('AuthService', () => {
     expect(service.token()).toBe('jwt-teste');
     expect(service.isAuthenticated()).toBe(true);
     expect(service.currentUser()?.email).toBe('aluno@teste.com');
+    expect(sessionStorage.getItem('malhaia.auth')).toContain('jwt-teste');
   });
 
-  it('logout limpa a sessão em memória', async () => {
+  it('logout limpa a sessão em memória e no sessionStorage', async () => {
     const promise = firstValueFrom(service.login({ email: 'a@b.com', senha: 'senha123' }));
     httpMock.expectOne('/api/auth/login').flush({
       token: 't',
@@ -56,5 +59,30 @@ describe('AuthService', () => {
     service.logout();
     expect(service.token()).toBeNull();
     expect(service.isAuthenticated()).toBe(false);
+    expect(sessionStorage.getItem('malhaia.auth')).toBeNull();
+  });
+
+  it('restaura sessão do sessionStorage no boot', () => {
+    sessionStorage.setItem(
+      'malhaia.auth',
+      JSON.stringify({
+        token: 'jwt-restored',
+        usuario: {
+          usuarioId: '11111111-1111-1111-1111-111111111111',
+          email: 'resto@teste.com',
+          papel: 'ALUNO',
+        },
+        displayName: 'resto',
+      }),
+    );
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
+    const restored = TestBed.inject(AuthService);
+    expect(restored.token()).toBe('jwt-restored');
+    expect(restored.isAuthenticated()).toBe(true);
+    expect(restored.currentUser()?.email).toBe('resto@teste.com');
   });
 });

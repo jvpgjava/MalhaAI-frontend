@@ -2,3 +2,18 @@
   display: block;
   min-height: 100dvh;
 }
+
+.app-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.app-main--auth {
+  display: block;
+}

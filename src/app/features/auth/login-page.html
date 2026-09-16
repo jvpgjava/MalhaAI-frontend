@@ -1,7 +1,17 @@
 <div class="auth-screen">
   <div class="auth-wrap">
-    <h1 class="logo-wordmark auth-logo">Malha<span class="accent">IA</span></h1>
-    <app-card title="Entrar" subtitle="Acesse sua malha curricular inteligente">
+    <header class="auth-brand">
+      <p class="auth-kicker">Planejador curricular</p>
+      <h1 class="auth-logo">Malha<span class="accent">IA</span></h1>
+      <p class="auth-tagline">Encontre o melhor caminho na sua grade</p>
+    </header>
+
+    <section class="auth-panel" aria-labelledby="login-title">
+      <header class="auth-panel__header">
+        <h2 id="login-title">Entrar</h2>
+        <p>Use o e-mail da sua conta MalhaIA</p>
+      </header>
+
       <form class="auth-form" (ngSubmit)="submit()">
         <app-input
           label="E-mail"
@@ -23,15 +33,26 @@
         />
 
         @if (erro()) {
-          <p class="auth-error">{{ erro() }}</p>
+          <p class="auth-error" role="alert">{{ erro() }}</p>
         }
 
-        <app-botao type="submit" variant="accent" [loading]="loading()">Entrar</app-botao>
+        <div class="auth-form__actions">
+          <app-botao
+            type="submit"
+            variant="accent"
+            [fullWidth]="true"
+            [loading]="loading()"
+            [disabled]="loading()"
+          >
+            Entrar
+          </app-botao>
+        </div>
       </form>
+
       <p class="auth-footer">
         Não tem conta?
-        <a routerLink="/cadastro">Cadastre-se</a>
+        <a routerLink="/cadastro">Criar conta</a>
       </p>
-    </app-card>
+    </section>
   </div>
 </div>

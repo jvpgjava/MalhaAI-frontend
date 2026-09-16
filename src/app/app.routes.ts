@@ -1,16 +1,19 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 import { coordenacaoGuard } from './core/auth/coordenacao.guard';
+import { guestGuard } from './core/auth/guest.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'grafo' },
   {
     path: 'login',
+    canActivate: [guestGuard],
     loadComponent: () =>
       import('./features/auth/login-page').then((m) => m.LoginPage),
   },
   {
     path: 'cadastro',
+    canActivate: [guestGuard],
     loadComponent: () =>
       import('./features/auth/cadastro-page').then((m) => m.CadastroPage),
   },
@@ -36,12 +39,6 @@ export const routes: Routes = [
     path: 'rea',
     canActivate: [authGuard],
     loadComponent: () => import('./features/rea/rea-page').then((m) => m.ReaPage),
-  },
-  {
-    path: 'duvidas',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/duvidas/duvidas-page').then((m) => m.DuvidasPage),
   },
   {
     path: 'coordenacao',

@@ -7,6 +7,8 @@ import {
   CaminhoResponse,
   ExplicacaoResponse,
   GrafoResponse,
+  OrientacaoRequest,
+  OrientacaoResponse,
 } from '../../core/models/api.models';
 
 @Injectable({ providedIn: 'root' })
@@ -21,11 +23,15 @@ export class GrafoService {
     );
   }
 
-  getCaminhoCritico(semestre?: string): Promise<CaminhoCriticoResponse> {
+  getCaminhoCritico(semestre?: string, considerarProgresso = true): Promise<CaminhoCriticoResponse> {
+    const params: Record<string, string> = {
+      considerarProgresso: String(considerarProgresso),
+    };
+    if (semestre) {
+      params['semestre'] = semestre;
+    }
     return firstValueFrom(
-      this.http.get<CaminhoCriticoResponse>('/api/grafo/caminho-critico', {
-        params: semestre ? { semestre } : {},
-      }),
+      this.http.get<CaminhoCriticoResponse>('/api/grafo/caminho-critico', { params }),
     );
   }
 
@@ -46,5 +52,9 @@ export class GrafoService {
         params: semestre ? { semestre } : {},
       }),
     );
+  }
+
+  orientar(body: OrientacaoRequest): Promise<OrientacaoResponse> {
+    return firstValueFrom(this.http.post<OrientacaoResponse>('/api/grafo/orientacao', body));
   }
 }
