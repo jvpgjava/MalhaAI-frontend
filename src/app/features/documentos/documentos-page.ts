@@ -1,7 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
+import { safeErrorMessage } from '../../core/http/safe-error';
 import { BotaoComponent } from '../../ui/botao/botao';
 import { CardComponent } from '../../ui/card/card';
 import { ModalComponent } from '../../ui/modal/modal';
@@ -31,20 +32,12 @@ export class DocumentosPage {
       this.chunks.set(res.chunksIndexados ?? 0);
       this.resultadoOpen.set(true);
     } catch (err) {
-      const httpErr = err as HttpErrorResponse;
-      if (httpErr.status === 503) {
-        this.erro.set(
-          'Serviço de embeddings/IA indisponível (503). Configure GOOGLE_API_KEY e tente de novo.',
-        );
-      } else if (httpErr.status === 403) {
-        this.erro.set('Seu papel não pode indexar documentos.');
-      } else {
-        this.erro.set(
-          typeof httpErr.error?.message === 'string'
-            ? httpErr.error.message
-            : 'Falha ao indexar documentos.',
-        );
-      }
+      this.erro.set(
+        safeErrorMessage(err, 'Falha ao indexar documentos.', {
+          403: 'Seu papel não pode indexar documentos.',
+          503: 'Serviço de embeddings/IA indisponível no momento.',
+        }),
+      );
     } finally {
       this.loading.set(false);
     }

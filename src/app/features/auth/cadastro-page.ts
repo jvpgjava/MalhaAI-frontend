@@ -1,10 +1,10 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
+import { safeErrorMessage } from '../../core/http/safe-error';
 import { BotaoComponent } from '../../ui/botao/botao';
 import { InputComponent, isEmailValido, mascararEmail } from '../../ui/input/input';
 
@@ -58,18 +58,13 @@ export class CadastroPage {
       );
       await this.router.navigateByUrl(this.auth.homePath());
     } catch (err) {
-      const httpErr = err as HttpErrorResponse;
-      if (httpErr.status === 409) {
-        this.erro.set('Este e-mail já está cadastrado.');
-      } else if (httpErr.status === 403) {
-        this.erro.set(
-          typeof httpErr.error?.message === 'string'
-            ? httpErr.error.message
-            : 'Cadastro público disponível apenas para estudante.',
-        );
-      } else {
-        this.erro.set('Não foi possível criar a conta. Tente novamente.');
-      }
+      this.erro.set(
+        safeErrorMessage(err, 'Não foi possível criar a conta. Tente novamente.', {
+          403: 'Cadastro público disponível apenas para estudante.',
+          409: 'Não foi possível concluir o cadastro com estes dados.',
+          429: 'Muitas tentativas. Aguarde um momento e tente de novo.',
+        }),
+      );
     } finally {
       this.loading.set(false);
     }

@@ -1,10 +1,10 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
+import { safeErrorMessage } from '../../core/http/safe-error';
 import { BotaoComponent } from '../../ui/botao/botao';
 import { InputComponent, isEmailValido, mascararEmail } from '../../ui/input/input';
 
@@ -43,12 +43,13 @@ export class LoginPage {
       await firstValueFrom(this.auth.login({ email, senha: this.senha() }));
       await this.router.navigateByUrl(this.auth.homePath());
     } catch (err) {
-      const httpErr = err as HttpErrorResponse;
-      if (httpErr.status === 401 || httpErr.status === 403) {
-        this.erro.set('E-mail ou senha inválidos.');
-      } else {
-        this.erro.set('Não foi possível entrar. Tente novamente.');
-      }
+      this.erro.set(
+        safeErrorMessage(err, 'Não foi possível entrar. Tente novamente.', {
+          401: 'E-mail ou senha inválidos.',
+          403: 'E-mail ou senha inválidos.',
+          429: 'Muitas tentativas. Aguarde um momento e tente de novo.',
+        }),
+      );
     } finally {
       this.loading.set(false);
     }

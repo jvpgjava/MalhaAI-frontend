@@ -1,10 +1,10 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
 import { PAPEIS, Papel, labelPapel } from '../../core/auth/auth.models';
+import { safeErrorMessage } from '../../core/http/safe-error';
 import { BotaoComponent } from '../../ui/botao/botao';
 import { CardComponent } from '../../ui/card/card';
 import { InputComponent, isEmailValido, mascararEmail } from '../../ui/input/input';
@@ -79,18 +79,12 @@ export class AdminPage {
       this.senha.set('');
       this.papel.set('ALUNO');
     } catch (err) {
-      const httpErr = err as HttpErrorResponse;
-      if (httpErr.status === 409) {
-        this.erro.set('Este e-mail já está cadastrado.');
-      } else if (httpErr.status === 403) {
-        this.erro.set('Apenas DEV pode criar contas privilegiadas.');
-      } else {
-        this.erro.set(
-          typeof httpErr.error?.message === 'string'
-            ? httpErr.error.message
-            : 'Não foi possível criar a conta.',
-        );
-      }
+      this.erro.set(
+        safeErrorMessage(err, 'Não foi possível criar a conta.', {
+          403: 'Apenas DEV pode criar contas privilegiadas.',
+          409: 'Não foi possível concluir o cadastro com estes dados.',
+        }),
+      );
     } finally {
       this.loading.set(false);
     }
