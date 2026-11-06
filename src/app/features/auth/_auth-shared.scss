@@ -8,9 +8,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: clamp(2rem, 6vh, 3.5rem) 1rem;
+  justify-content: flex-start;
+  padding: clamp(1.25rem, 4vh, 2.75rem) 1rem 1.5rem;
   box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: #ffffff;
   background-image: url('/Fundo-Login.png');
   background-size: cover;
@@ -24,6 +26,7 @@
   flex-direction: column;
   align-items: stretch;
   gap: 1.15rem;
+  margin-block: auto;
 }
 
 .auth-brand {
@@ -184,60 +187,90 @@
   }
 }
 
-/* Login: cabe na viewport sem scroll interno */
-.auth-screen--login {
+/* Login / cadastro: sem clipar o card no centro da tela */
+.auth-screen--login,
+.auth-screen--cadastro {
   .auth-wrap {
     width: min(560px, 96vw);
     align-items: center;
-    gap: 1.35rem;
+    gap: 1.15rem;
   }
 
   .auth-brand {
     gap: 0;
-    padding-top: 0.25rem;
+    padding-top: 0.15rem;
     width: 100%;
   }
 
   .auth-brand__logo {
-    width: min(540px, 100%);
+    width: min(520px, 100%);
   }
 
   .auth-panel {
     width: min(420px, 100%);
-    padding: 1.25rem 1.35rem 1.15rem;
+    padding: 1.15rem 1.25rem 1.05rem;
   }
 
   .auth-panel__header {
-    margin-bottom: 0.9rem;
+    margin-bottom: 0.75rem;
   }
 
   .auth-form {
-    gap: 0.8rem;
+    gap: 0.65rem;
   }
 
   .auth-footer {
-    margin-top: 0.9rem;
-    padding-top: 0.8rem;
+    margin-top: 0.75rem;
+    padding-top: 0.7rem;
   }
 }
 
-@media (max-height: 700px) {
-  .auth-screen--login {
-    justify-content: flex-start;
-    padding-top: 1.25rem;
-    padding-bottom: 1rem;
+.auth-screen--cadastro {
+  .auth-brand__logo {
+    width: min(400px, 90vw);
+  }
 
-    .auth-brand__logo {
-      width: min(360px, 88vw);
+  .auth-wrap {
+    gap: 0.85rem;
+  }
+
+  .auth-panel {
+    padding: 1rem 1.15rem 0.95rem;
+  }
+
+  .auth-form {
+    gap: 0.55rem;
+  }
+}
+
+@media (max-height: 760px) {
+  .auth-screen--login,
+  .auth-screen--cadastro {
+    .auth-wrap {
+      margin-block: 0;
+      gap: 0.7rem;
     }
 
-    .auth-wrap {
-      gap: 0.75rem;
+    .auth-brand__logo {
+      width: min(320px, 78vw);
     }
 
     .auth-panel {
-      padding: 1rem 1.1rem 0.95rem;
+      padding: 0.9rem 1.05rem 0.85rem;
     }
+
+    .auth-form {
+      gap: 0.45rem;
+    }
+
+    .auth-footer {
+      margin-top: 0.6rem;
+      padding-top: 0.55rem;
+    }
+  }
+
+  .auth-screen--cadastro .auth-brand__logo {
+    width: min(280px, 72vw);
   }
 }
 
@@ -256,5 +289,9 @@
 
   .auth-screen--login .auth-brand__logo {
     width: min(400px, 94vw);
+  }
+
+  .auth-screen--cadastro .auth-brand__logo {
+    width: min(320px, 88vw);
   }
 }

@@ -30,9 +30,7 @@
   background: var(--color-surface);
   color: var(--color-ink);
   outline: none;
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 
 .ui-input__control--with-toggle {
@@ -41,7 +39,7 @@
 
 .ui-input__control:focus {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+  box-shadow: none;
 }
 
 .ui-input__control:disabled {

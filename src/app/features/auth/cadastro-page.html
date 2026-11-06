@@ -1,18 +1,18 @@
-<div class="auth-screen">
+<div class="auth-screen auth-screen--cadastro">
   <div class="auth-wrap">
     <header class="auth-brand">
-      <img class="auth-brand__mark" src="/M-logo.png" width="72" height="72" alt="" />
-      <p class="auth-kicker">Planejador curricular</p>
-      <p class="auth-tagline">Crie sua conta de estudante</p>
+      <img
+        class="auth-brand__logo"
+        src="/MalhaAI-logo.png"
+        width="420"
+        height="158"
+        alt="MalhaAI — Planejador de Grade Curricular"
+      />
     </header>
 
     <section class="auth-panel" aria-labelledby="cadastro-title">
       <header class="auth-panel__header">
         <h2 id="cadastro-title">Criar conta</h2>
-        <p>
-          O cadastro público é para <strong>Estudante</strong>. Professor, Coordenação e Dev são
-          criados pelo painel Contas (DEV).
-        </p>
       </header>
 
       <form class="auth-form" (ngSubmit)="submit()">
@@ -63,7 +63,7 @@
             [loading]="loading()"
             [disabled]="loading()"
           >
-            Cadastrar como estudante
+            Cadastrar
           </app-botao>
         </div>
       </form>
