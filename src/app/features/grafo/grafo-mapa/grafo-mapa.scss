@@ -11,15 +11,14 @@
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity;
   background:
-    radial-gradient(circle at top left, rgba(232, 54, 109, 0.05), transparent 40%),
-    linear-gradient(180deg, #f8fafc 0%, #eef5f7 100%);
+    radial-gradient(circle at top right, rgba(255, 107, 0, 0.08), transparent 42%),
+    radial-gradient(circle at bottom left, rgba(10, 31, 61, 0.06), transparent 45%),
+    linear-gradient(180deg, #ffffff 0%, #eef2f8 100%);
   border: 1px solid var(--color-border);
   border-radius: calc(var(--radius-card) + 4px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow-sm);
 
-  /* dica visual de que há mais conteúdo à direita no mobile */
   &::after {
     content: '';
     position: sticky;
@@ -30,7 +29,7 @@
     height: 100%;
     margin-left: -28px;
     pointer-events: none;
-    background: linear-gradient(90deg, transparent, rgba(248, 250, 252, 0.92));
+    background: linear-gradient(90deg, transparent, rgba(243, 246, 251, 0.95));
     opacity: 0;
   }
 }
@@ -66,4 +65,3 @@
     min-width: 780px;
   }
 }
-

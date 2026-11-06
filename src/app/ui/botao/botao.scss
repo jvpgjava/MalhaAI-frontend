@@ -14,19 +14,24 @@
   justify-content: center;
   gap: 0.5rem;
   min-height: 44px;
-  padding: 0.7rem 1.25rem;
+  padding: 0.65rem 1.2rem;
   border-radius: var(--radius-control);
   border: 1px solid transparent;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-weight: 700;
+  font-size: 0.925rem;
   cursor: pointer;
   transition:
     filter 0.15s ease,
     opacity 0.15s ease,
     border-color 0.15s ease,
-    transform 0.15s ease;
+    background 0.15s ease,
+    transform 0.1s ease;
   background: var(--color-accent);
   color: #fff;
+}
+
+.ui-botao:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .ui-botao:disabled {
@@ -40,11 +45,7 @@
 }
 
 .ui-botao--accent:hover:not(:disabled) {
-  filter: brightness(0.96);
-}
-
-.ui-botao--accent:active:not(:disabled) {
-  transform: translateY(1px);
+  background: var(--color-accent-hover);
 }
 
 .ui-botao--primary {
@@ -52,27 +53,42 @@
   color: #fff;
 }
 
+.ui-botao--primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
 .ui-botao--ghost {
   background: transparent;
   color: var(--color-primary);
 }
 
+.ui-botao--ghost:hover:not(:disabled) {
+  background: var(--color-soft);
+}
+
 .ui-botao--outline {
   background: transparent;
-  border-color: rgba(255, 255, 255, 0.45);
-  color: inherit;
-}
-
-.navbar .ui-botao--outline {
-  border-color: rgba(255, 255, 255, 0.45);
-  color: #fff;
-}
-
-.app-page .ui-botao--outline,
-.auth-shell .ui-botao--outline,
-:host-context(.page) .ui-botao--outline {
   border-color: var(--color-border);
   color: var(--color-primary);
+}
+
+.ui-botao--outline:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+:host-context(app-navbar) .ui-botao--outline,
+:host-context(.navbar) .ui-botao--outline {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #fff;
+  background: transparent;
+}
+
+:host-context(app-navbar) .ui-botao--outline:hover:not(:disabled),
+:host-context(.navbar) .ui-botao--outline:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--color-accent);
+  color: #fff;
 }
 
 .ui-botao--full {

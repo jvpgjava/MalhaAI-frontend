@@ -1,6 +1,6 @@
 # MalhaIA — Frontend
 
-Interface Angular do planejador de grade curricular: grafo de pré-requisitos com animação, caminho crítico restante conforme progresso, busca até eletiva, REA e oferta da coordenação.
+Interface Angular do planejador de grade curricular: grafo de pré-requisitos com animação, caminho crítico restante conforme progresso, busca até eletiva, REA, documentos (RAG), oferta da coordenação e gestão de contas (DEV).
 
 Visual baseado no Figma: [MalhaAI](https://www.figma.com/design/UMB3ZL7zhBwvhqQYOxSTFT/MalhaAI).  
 Planejamento das fases: [`README_FRONTEND.md`](README_FRONTEND.md).  
@@ -95,20 +95,28 @@ Se o backend estiver em outra porta, edite `src/environments/environment.develop
 ## 4. Primeiro uso (fluxo recomendado)
 
 1. Abra `http://localhost:4200` — deve redirecionar para `/login`.
-2. Clique em **Criar conta** (`/cadastro`).
-3. Preencha e-mail, senha e escolha **Sou Aluno** ou **Coordenação**.
-   - O campo “Nome completo” é só visual; o backend recebe `email`, `senha` e `papel`.
-4. Após o cadastro/login você cai em `/grafo`.
-5. O grafo anima o caminho restante (progresso) e destaca ofertadas do semestre.
+2. Clique em **Criar conta** (`/cadastro`) — o cadastro público cria apenas **Estudante** (`ALUNO`).
+3. Preencha e-mail e senha (nome completo é só visual na UI).
+4. Após o login você cai em `/grafo`.
+5. Papéis privilegiados (**Professor**, **Coordenação**, **Dev**) são criados pelo painel **Contas** (`/admin`), exclusivo de `DEV`.
+
+### Papéis
+
+| Papel | Acesso na UI |
+|---|---|
+| `ALUNO` (Estudante) | Grafo, Progresso, Eletiva, REA |
+| `PROFESSOR` | Grafo, Documentos |
+| `COORDENACAO` | Grafo, Documentos, Oferta |
+| `DEV` | Tudo + Contas |
 
 ### Contas de teste (se já existirem no banco)
 
 | E-mail | Senha | Papel |
 |---|---|---|
-| `aluno@ia.test` | `senha123` | ALUNO |
-| `coord@ia.test` | `senha123` | COORDENACAO |
-
-(Criadas durante os testes locais; se não existirem, cadastre pela UI.)
+| `aluno@teste.com` | `senha123` | DEV (ambiente local) |
+| `estudante@malha.test` | `senha123` | ALUNO |
+| `prof@malha.test` | `senha123` | PROFESSOR |
+| `coord@teste.com` | `senha123` | COORDENACAO |
 
 ---
 
@@ -117,18 +125,20 @@ Se o backend estiver em outra porta, edite `src/environments/environment.develop
 | Rota | Acesso | O que faz |
 |---|---|---|
 | `/login` | público | Login JWT |
-| `/cadastro` | público | Cadastro ALUNO / COORDENACAO |
+| `/cadastro` | público | Cadastro de estudante (`ALUNO`) |
 | `/grafo` | autenticado | Grafo + caminho restante + oferta do semestre |
-| `/progresso` | autenticado | Marcar disciplinas concluídas |
-| `/eletiva` | autenticado | Menor caminho até uma disciplina |
-| `/rea` | autenticado | Disciplinas elegíveis ao REA |
-| `/coordenacao` | só `COORDENACAO` | Oferta / vagas por semestre |
+| `/progresso` | `ALUNO` / `DEV` | Marcar disciplinas concluídas |
+| `/eletiva` | `ALUNO` / `DEV` | Menor caminho até uma disciplina |
+| `/rea` | `ALUNO` / `DEV` | Disciplinas elegíveis ao REA |
+| `/documentos` | `PROFESSOR` / `COORDENACAO` / `DEV` | Indexar chunks seed (RAG) |
+| `/coordenacao` | `COORDENACAO` / `DEV` | Oferta / vagas por semestre |
+| `/admin` | `DEV` | Criar contas de qualquer papel |
 
 - Usuário deslogado em rota protegida → `/login`.
-- `ALUNO` tentando `/coordenacao` → redirecionado.
-- Link **Coordenação** só aparece na navbar se o papel for `COORDENACAO`.
+- Papel sem permissão → redirecionado para a home do papel.
+- A navbar só lista os links permitidos ao papel logado.
 
-**Sessão:** o JWT fica **só em memória** (signal do `AuthService`). Dar F5 na página exige login de novo.
+**Sessão:** JWT em memória (signals) e `sessionStorage` (`malhaia.auth`) — F5 mantém a sessão na aba.
 
 ---
 
@@ -153,14 +163,16 @@ npx ng version                # versões do Angular/CLI
 ```
 src/app/
   core/          AuthService, interceptor, guards, models da API
-  ui/            botao, input, card, navbar
+  ui/            botao, input, card, navbar, modal
   features/
     auth/        login, cadastro
     grafo/       página + mapa D3 + layout
     progresso/
     eletiva/
     rea/
+    documentos/
     coordenacao/
+    admin/       gestão de contas (DEV)
 ```
 
 ---
@@ -172,7 +184,7 @@ src/app/
 | `ng` / CLI reclama da versão do Node | Use Node 24.15+ e ajuste o PATH |
 | Tela branca / erros de API no console | Backend `UP`? Proxy apontando para a porta certa? |
 | Sempre volta para `/login` | JWT só em memória — faça login de novo após refresh |
-| `403` em Coordenação | Conta precisa ser `COORDENACAO` |
+| `403` em Oferta / Documentos / Contas | Papel insuficiente (`COORDENACAO`/`PROFESSOR`/`DEV`) |
 | Explicação IA com erro 503 | Chaves Abacus/Gemini no **backend**, não no front |
 | Grafo não anima / não carrega | Confirme `GET /api/grafo` com token no Network do DevTools |
 | CORS no browser | `FRONTEND_ORIGIN=http://localhost:4200` no backend |

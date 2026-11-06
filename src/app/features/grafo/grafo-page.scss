@@ -187,10 +187,22 @@
 
 .grafo-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.25rem;
   align-items: start;
   margin-top: 1.25rem;
+}
+
+.hint-tap {
+  margin-top: 0.85rem;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.detalhe-meta {
+  text-align: center;
+  margin-bottom: 0.25rem;
 }
 
 .grafo-layout__board {
@@ -314,8 +326,9 @@
 
 .error-inline {
   margin-top: 0.75rem;
-  color: var(--color-accent);
+  color: var(--color-danger);
   font-size: 0.875rem;
+  text-align: center;
 }
 
 .explicacao {
@@ -346,12 +359,7 @@
 }
 
 @media (max-width: 960px) {
-  .grafo-layout {
-    grid-template-columns: 1fr;
-  }
-
   .grafo-layout__board {
-    /* permite o mapa rolar horizontalmente sem estourar a página */
     overflow: hidden;
   }
 

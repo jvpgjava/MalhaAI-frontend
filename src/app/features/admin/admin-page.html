@@ -1,0 +1,70 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <p class="page-kicker">Painel DEV</p>
+      <h1 class="page-title">Gestão de contas</h1>
+      <p class="page-subtitle">
+        Crie acessos de Estudante, Professor, Coordenação ou Dev. O cadastro público só gera
+        estudantes.
+      </p>
+    </div>
+  </header>
+
+  <app-card title="Nova conta">
+    @if (erro()) {
+      <div class="error-banner">{{ erro() }}</div>
+    }
+
+    <form class="admin-form" (ngSubmit)="criar()">
+      <app-input
+        label="E-mail"
+        type="email"
+        autocomplete="off"
+        placeholder="usuario@dominio.com"
+        [required]="true"
+        [(value)]="email"
+      />
+      <app-input
+        label="Senha temporária"
+        type="password"
+        autocomplete="new-password"
+        placeholder="Mínimo 6 caracteres"
+        [required]="true"
+        [(value)]="senha"
+      />
+
+      <div>
+        <p class="papel-label">Papel</p>
+        <div class="papel-grid">
+          @for (p of papeis; track p) {
+            <button
+              type="button"
+              class="papel-card"
+              [class.selected]="papel() === p"
+              (click)="selecionarPapel(p)"
+            >
+              {{ labelPapel(p) }}
+              <small>{{ descricao(p) }}</small>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="admin-actions">
+        <app-botao type="submit" variant="accent" [loading]="loading()">Criar conta</app-botao>
+      </div>
+    </form>
+  </app-card>
+</div>
+
+<app-modal
+  [open]="sucessoOpen()"
+  title="Conta criada"
+  icon="✓"
+  (close)="sucessoOpen.set(false)"
+>
+  <p class="malha-dialog-message">{{ sucessoMsg() }}</p>
+  <div modal-actions>
+    <app-botao variant="accent" (clicked)="sucessoOpen.set(false)">Ok</app-botao>
+  </div>
+</app-modal>

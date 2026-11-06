@@ -1,9 +1,11 @@
 <div class="page">
   <header class="page-header">
     <div>
+      <p class="page-kicker">Estudante</p>
       <h1 class="page-title">Painel REA</h1>
       <p class="page-subtitle">Disciplinas elegíveis ao Regime Especial de Aprendizagem.</p>
     </div>
+    <app-botao variant="outline" (clicked)="infoOpen.set(true)">O que é o REA?</app-botao>
   </header>
 
   <div class="rea-layout">
@@ -16,6 +18,7 @@
         <p class="muted">Carregando…</p>
       } @else if (cards().length === 0) {
         <div class="empty-state">
+          <img src="/M-logo.png" width="56" height="56" alt="" class="empty-logo" />
           <h2>Nenhuma elegibilidade no momento</h2>
           <p>Quando houver disciplinas com REA possível, elas aparecerão aqui.</p>
         </div>
@@ -26,7 +29,6 @@
               <div class="rea-card">
                 <span class="badge badge-warn">{{ card.motivoLabel }}</span>
                 <h3>{{ card.nome }}</h3>
-                <p class="muted">ID {{ card.disciplinaId }}</p>
                 <app-botao variant="outline" [disabled]="true">Solicitar REA</app-botao>
                 <small class="hint">Solicitação online ainda não disponível neste backend.</small>
               </div>
@@ -35,19 +37,25 @@
         </div>
       }
     </div>
-
-    <aside>
-      <app-card title="O que é o REA?">
-        <p class="info-text">
-          O Regime Especial de Aprendizagem (REA) permite cursar disciplinas em situações
-          excepcionais, como quando a oferta regular não está disponível ou há conflito de
-          horário impeditivo.
-        </p>
-        <p class="info-text">
-          Este painel lista elegibilidades detectadas automaticamente com base no seu progresso
-          e na oferta do semestre.
-        </p>
-      </app-card>
-    </aside>
   </div>
 </div>
+
+<app-modal
+  [open]="infoOpen()"
+  title="O que é o REA?"
+  icon="R"
+  size="md"
+  (close)="infoOpen.set(false)"
+>
+  <p class="info-text">
+    O Regime Especial de Aprendizagem (REA) permite cursar disciplinas em situações excepcionais,
+    como quando a oferta regular não está disponível ou há conflito de horário impeditivo.
+  </p>
+  <p class="info-text">
+    Este painel lista elegibilidades detectadas automaticamente com base no seu progresso e na
+    oferta do semestre.
+  </p>
+  <div modal-actions>
+    <app-botao variant="accent" (clicked)="infoOpen.set(false)">Entendi</app-botao>
+  </div>
+</app-modal>

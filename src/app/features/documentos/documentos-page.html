@@ -1,0 +1,51 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <p class="page-kicker">Base institucional</p>
+      <h1 class="page-title">Documentos & RAG</h1>
+      <p class="page-subtitle">
+        Indexe os chunks seed no vector store para melhorar a precisão das explicações e do chat.
+        Somente Professor, Coordenação e Dev.
+      </p>
+    </div>
+    <app-botao variant="accent" [loading]="loading()" (clicked)="indexar()">
+      Indexar documentos
+    </app-botao>
+  </header>
+
+  @if (erro()) {
+    <div class="error-banner">{{ erro() }}</div>
+  }
+
+  <div class="docs-grid">
+    <app-card title="O que esta ação faz">
+      <ul class="docs-list">
+        <li>Gera embeddings dos trechos institucionais seed.</li>
+        <li>Atualiza o índice usado pela busca semântica (RAG).</li>
+        <li>Não altera o grafo curricular nem a oferta do semestre.</li>
+      </ul>
+    </app-card>
+
+    <app-card title="Boas práticas (guardrails)">
+      <ul class="docs-list">
+        <li>Fatos oficiais só vêm do contexto indexado — a IA não deve inventar normas.</li>
+        <li>Após indexar, valide perguntas-chave (REA, carga horária, pré-requisitos).</li>
+        <li>Se a resposta vier genérica ou 503, confira as chaves de embedding/LLM.</li>
+      </ul>
+    </app-card>
+  </div>
+</div>
+
+<app-modal
+  [open]="resultadoOpen()"
+  title="Indexação concluída"
+  icon="✓"
+  (close)="resultadoOpen.set(false)"
+>
+  <p class="malha-dialog-message">
+    {{ chunks() }} chunk(s) indexado(s) com sucesso.
+  </p>
+  <div modal-actions>
+    <app-botao variant="accent" (clicked)="resultadoOpen.set(false)">Entendi</app-botao>
+  </div>
+</app-modal>

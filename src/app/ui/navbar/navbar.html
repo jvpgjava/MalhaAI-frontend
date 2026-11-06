@@ -1,8 +1,9 @@
 @if (isAuthenticated()) {
   <header class="navbar">
     <div class="navbar__inner">
-      <a class="navbar__brand" routerLink="/grafo" (click)="closeMenu()">
-        Malha<span class="accent">IA</span>
+      <a class="navbar__brand" routerLink="/grafo" (click)="closeMenu()" aria-label="MalhaAI — início">
+        <img class="navbar__logo" src="/M-logo.png" width="40" height="40" alt="" />
+        <span class="navbar__wordmark">Malha<span class="accent">AI</span></span>
       </a>
 
       <button
@@ -18,17 +19,22 @@
       </button>
 
       <nav class="navbar__nav" [class.is-open]="menuOpen()">
-        <a routerLink="/grafo" routerLinkActive="active" (click)="closeMenu()">Grafo</a>
-        <a routerLink="/progresso" routerLinkActive="active" (click)="closeMenu()">Meu Progresso</a>
-        <a routerLink="/eletiva" routerLinkActive="active" (click)="closeMenu()">Buscar Eletiva</a>
-        <a routerLink="/rea" routerLinkActive="active" (click)="closeMenu()">REA</a>
-        @if (isCoordenacao()) {
-          <a routerLink="/coordenacao" routerLinkActive="active" (click)="closeMenu()">Coordenação</a>
+        @for (link of links(); track link.path) {
+          <a
+            [routerLink]="link.path"
+            routerLinkActive="active"
+            (click)="closeMenu()"
+          >
+            {{ link.label }}
+          </a>
         }
       </nav>
 
       <div class="navbar__user" [class.is-open]="menuOpen()">
-        <span class="navbar__email" [title]="label()">{{ label() }}</span>
+        <div class="navbar__identity">
+          <span class="navbar__email" [title]="label()">{{ label() }}</span>
+          <span class="navbar__role">{{ papelLabel() }}</span>
+        </div>
         <app-botao variant="outline" (clicked)="logout()">Sair</app-botao>
       </div>
     </div>

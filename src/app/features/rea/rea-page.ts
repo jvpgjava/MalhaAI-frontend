@@ -3,6 +3,7 @@
 import { Disciplina, ElegibilidadeRea, MotivoRea } from '../../core/models/api.models';
 import { BotaoComponent } from '../../ui/botao/botao';
 import { CardComponent } from '../../ui/card/card';
+import { ModalComponent } from '../../ui/modal/modal';
 import { GrafoService } from '../grafo/grafo.service';
 import { ReaService } from './rea.service';
 
@@ -16,7 +17,7 @@ interface ReaCardView {
 @Component({
   selector: 'app-rea-page',
   standalone: true,
-  imports: [BotaoComponent, CardComponent],
+  imports: [BotaoComponent, CardComponent, ModalComponent],
   templateUrl: './rea-page.html',
   styleUrl: './rea-page.scss',
 })
@@ -28,6 +29,7 @@ export class ReaPage implements OnInit {
   readonly disciplinas = signal<Disciplina[]>([]);
   readonly loading = signal(true);
   readonly erro = signal<string | null>(null);
+  readonly infoOpen = signal(false);
 
   readonly cards = computed<ReaCardView[]>(() => {
     const byId = new Map(this.disciplinas().map((d) => [d.id, d]));

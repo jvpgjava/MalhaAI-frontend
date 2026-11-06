@@ -41,7 +41,7 @@ export class LoginPage {
     this.loading.set(true);
     try {
       await firstValueFrom(this.auth.login({ email, senha: this.senha() }));
-      await this.router.navigateByUrl('/grafo');
+      await this.router.navigateByUrl(this.auth.homePath());
     } catch (err) {
       const httpErr = err as HttpErrorResponse;
       if (httpErr.status === 401 || httpErr.status === 403) {

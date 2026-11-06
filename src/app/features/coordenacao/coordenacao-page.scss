@@ -1,67 +1,41 @@
-.page-subtitle {
-  margin-top: 0.35rem;
-  color: var(--color-muted);
+.mt {
+  display: block;
+  margin-top: 1rem;
 }
 
 .muted {
   color: var(--color-muted);
 }
 
-.success-banner {
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius-control);
-  background: #e8f7ef;
-  color: #0f6b3c;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-
-.mt {
-  display: block;
-  margin-top: 1rem;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  max-width: 240px;
-
-  span {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--color-primary);
-  }
-
-  input {
-    min-height: 44px;
-    padding: 0.55rem 0.75rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-control);
-  }
-}
-
 .table-wrap {
   overflow: auto;
+  max-height: min(60vh, 560px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 480px;
 
   th,
   td {
     text-align: left;
-    padding: 0.75rem 0.5rem;
+    padding: 0.75rem 0.85rem;
     border-bottom: 1px solid var(--color-border);
     vertical-align: middle;
   }
 
   th {
+    position: sticky;
+    top: 0;
+    background: var(--color-soft);
     color: var(--color-muted);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    z-index: 1;
   }
 
   input[type='number'] {
@@ -70,6 +44,12 @@ table {
     padding: 0.4rem 0.55rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-control);
+    outline: none;
+
+    &:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 18%, transparent);
+    }
   }
 }
 
@@ -82,6 +62,18 @@ table {
   input {
     width: 1.1rem;
     height: 1.1rem;
-    accent-color: var(--color-teal);
+    accent-color: var(--color-accent);
+  }
+}
+
+@media (max-width: 640px) {
+  .page-header {
+    app-botao {
+      width: 100%;
+    }
+  }
+
+  .field {
+    max-width: none;
   }
 }

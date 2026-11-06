@@ -1,8 +1,9 @@
 <div class="page">
   <header class="page-header">
     <div>
-      <h1 class="page-title">Meu Progresso</h1>
-      <p class="page-subtitle">Marque as disciplinas já concluídas.</p>
+      <p class="page-kicker">Estudante</p>
+      <h1 class="page-title">Meu progresso</h1>
+      <p class="page-subtitle">Marque as disciplinas já concluídas e salve seu histórico.</p>
     </div>
     <app-botao variant="accent" [loading]="saving()" [disabled]="loading()" (clicked)="salvar()">
       Salvar progresso
@@ -13,7 +14,7 @@
     <div class="error-banner">{{ erro() }}</div>
   }
   @if (sucesso()) {
-    <div class="success-banner">{{ sucesso() }}</div>
+    <div class="sucesso-banner">{{ sucesso() }}</div>
   }
 
   @if (loading()) {

@@ -5,7 +5,6 @@ import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
-import { Papel } from '../../core/auth/auth.models';
 import { BotaoComponent } from '../../ui/botao/botao';
 import { InputComponent, isEmailValido, mascararEmail } from '../../ui/input/input';
 
@@ -24,13 +23,8 @@ export class CadastroPage {
   readonly email = signal('');
   readonly senha = signal('');
   readonly confirmarSenha = signal('');
-  readonly papel = signal<Papel>('ALUNO');
   readonly loading = signal(false);
   readonly erro = signal<string | null>(null);
-
-  selecionarPapel(papel: Papel): void {
-    this.papel.set(papel);
-  }
 
   async submit(): Promise<void> {
     this.erro.set(null);
@@ -57,16 +51,22 @@ export class CadastroPage {
           {
             email,
             senha: this.senha(),
-            papel: this.papel(),
+            papel: 'ALUNO',
           },
           this.nome(),
         ),
       );
-      await this.router.navigateByUrl('/grafo');
+      await this.router.navigateByUrl(this.auth.homePath());
     } catch (err) {
       const httpErr = err as HttpErrorResponse;
       if (httpErr.status === 409) {
         this.erro.set('Este e-mail já está cadastrado.');
+      } else if (httpErr.status === 403) {
+        this.erro.set(
+          typeof httpErr.error?.message === 'string'
+            ? httpErr.error.message
+            : 'Cadastro público disponível apenas para estudante.',
+        );
       } else {
         this.erro.set('Não foi possível criar a conta. Tente novamente.');
       }

@@ -139,11 +139,13 @@ export class GrafoMapaComponent {
     svg.attr('viewBox', `0 0 ${width} ${height}`).attr('width', '100%').attr('height', height);
 
     const styles = getComputedStyle(document.documentElement);
-    const colorAccent = styles.getPropertyValue('--color-accent').trim() || '#e8366d';
-    const colorTeal = styles.getPropertyValue('--color-teal').trim() || '#1a7a8a';
-    const colorBorder = styles.getPropertyValue('--color-border').trim() || '#cfd8e3';
-    const colorInk = styles.getPropertyValue('--color-ink').trim() || '#1e2761';
-    const colorWarn = styles.getPropertyValue('--color-warn').trim() || '#e8914b';
+    const colorAccent = styles.getPropertyValue('--color-accent').trim() || '#ff6b00';
+    const colorTeal = styles.getPropertyValue('--color-secondary').trim()
+      || styles.getPropertyValue('--color-teal').trim()
+      || '#1e3a5f';
+    const colorBorder = styles.getPropertyValue('--color-border').trim() || '#d9e2ec';
+    const colorInk = styles.getPropertyValue('--color-ink').trim() || '#0a1f3d';
+    const colorWarn = styles.getPropertyValue('--color-warn').trim() || '#ff6b00';
     const colorDone = '#94a3b8';
     const colorOferta = '#0f766e';
 

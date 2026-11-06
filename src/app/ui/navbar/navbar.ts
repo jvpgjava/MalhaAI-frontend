@@ -4,6 +4,12 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { BotaoComponent } from '../botao/botao';
 
+interface NavLink {
+  path: string;
+  label: string;
+  show: boolean;
+}
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -17,11 +23,29 @@ export class NavbarComponent {
 
   readonly menuOpen = signal(false);
   readonly isAuthenticated = this.auth.isAuthenticated;
-  readonly isCoordenacao = this.auth.isCoordenacao;
+  readonly papelLabel = this.auth.papelLabel;
+
   readonly label = computed(() => {
     const name = this.auth.displayName();
     const user = this.auth.currentUser();
     return name || user?.email || '';
+  });
+
+  readonly links = computed<NavLink[]>(() => {
+    const aluno = this.auth.isAluno() || this.auth.isDev();
+    const docs = this.auth.canIndexarDocumentos();
+    const oferta = this.auth.canGerirOferta();
+    const admin = this.auth.canAdminUsuarios();
+
+    return [
+      { path: '/grafo', label: 'Grafo', show: true },
+      { path: '/progresso', label: 'Progresso', show: aluno },
+      { path: '/eletiva', label: 'Eletiva', show: aluno },
+      { path: '/rea', label: 'REA', show: aluno },
+      { path: '/documentos', label: 'Documentos', show: docs },
+      { path: '/coordenacao', label: 'Oferta', show: oferta },
+      { path: '/admin', label: 'Contas', show: admin },
+    ].filter((l) => l.show);
   });
 
   toggleMenu(): void {

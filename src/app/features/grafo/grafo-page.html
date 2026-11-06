@@ -1,11 +1,12 @@
 <div class="page grafo-page">
   <header class="page-header">
     <div>
-      <h1 class="page-title">Grafo Curricular</h1>
+      <p class="page-kicker">Planejamento</p>
+      <h1 class="page-title">Grafo curricular</h1>
       <p class="page-subtitle">
         Informe o semestre ofertado e busque o melhor caminho: o sistema escolhe o que cursar
         primeiro entre as disciplinas liberadas, consulta fontes confiáveis/RAG e salva o roadmap
-        para as próximas consultas dos alunos.
+        para as próximas consultas.
       </p>
     </div>
     <span class="badge badge-accent">
@@ -95,7 +96,7 @@
         }
         <p class="orientacao__resumo">{{ o.orientacao.resumo }}</p>
 
-        @if (o.orientacao.disciplinas?.length) {
+        @if (o.orientacao.disciplinas.length) {
           <ol class="orientacao__disciplinas">
             @for (d of o.orientacao.disciplinas; track d.nome; let i = $index) {
               <li class="disc-card">
@@ -181,44 +182,45 @@
       </div>
     </div>
 
-    <aside class="grafo-layout__side">
-      <app-card title="Disciplina selecionada">
-        @if (selecionada(); as d) {
-          <h3 class="side-title">{{ d.nome }}</h3>
-          <p class="muted">Semestre sugerido: {{ d.semestreSugerido }}</p>
-          <p class="muted">Carga horária: {{ d.cargaHoraria }}h</p>
-          @if (concluidasIds().includes(d.id)) {
-            <p class="status status--feita">Concluída</p>
-          } @else if (ofertadasIds().includes(d.id)) {
-            <p class="status status--oferta">Ofertada em {{ semestre() }}</p>
-          }
-
-          <div class="side-actions">
-            <app-botao
-              variant="accent"
-              [loading]="explicacaoLoading()"
-              (clicked)="carregarExplicacao()"
-            >
-              Ver explicação completa IA
-            </app-botao>
-            <app-botao variant="outline" (clicked)="marcarReprovada()">
-              Marcar como reprovada
-            </app-botao>
-          </div>
-
-          @if (explicacaoErro()) {
-            <p class="error-inline">{{ explicacaoErro() }}</p>
-          }
-          @if (explicacao()) {
-            <div class="explicacao">
-              <h4>Explicação</h4>
-              <p>{{ explicacao() }}</p>
-            </div>
-          }
-        } @else {
-          <p class="muted">Clique em um nó do grafo para ver detalhes.</p>
-        }
-      </app-card>
-    </aside>
   </div>
+
+  <p class="hint-tap">Toque em um nó do grafo para ver detalhes, explicação IA e ações.</p>
 </div>
+
+<app-modal
+  [open]="selecionada() !== null"
+  [title]="selecionada()?.nome ?? 'Disciplina'"
+  size="lg"
+  (close)="fecharDetalhe()"
+>
+  @if (selecionada(); as d) {
+    <div class="detalhe-meta">
+      <p class="muted">Semestre sugerido: {{ d.semestreSugerido }}</p>
+      <p class="muted">Carga horária: {{ d.cargaHoraria }}h</p>
+      @if (concluidasIds().includes(d.id)) {
+        <p class="status status--feita">Concluída</p>
+      } @else if (ofertadasIds().includes(d.id)) {
+        <p class="status status--oferta">Ofertada em {{ semestre() }}</p>
+      }
+    </div>
+
+    <div class="side-actions">
+      <app-botao variant="accent" [loading]="explicacaoLoading()" (clicked)="carregarExplicacao()">
+        Ver explicação completa IA
+      </app-botao>
+      <app-botao variant="outline" (clicked)="marcarReprovada()">
+        Marcar como reprovada
+      </app-botao>
+    </div>
+
+    @if (explicacaoErro()) {
+      <p class="error-inline">{{ explicacaoErro() }}</p>
+    }
+    @if (explicacao()) {
+      <div class="explicacao">
+        <h4>Explicação</h4>
+        <p>{{ explicacao() }}</p>
+      </div>
+    }
+  }
+</app-modal>

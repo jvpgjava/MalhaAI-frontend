@@ -1,4 +1,5 @@
-export type Papel = 'ALUNO' | 'COORDENACAO';
+import type { Papel } from '../auth/auth.models';
+export type { Papel } from '../auth/auth.models';
 
 export type MotivoRea = 'NAO_OFERTADA' | 'CONFLITO_HORARIO';
 

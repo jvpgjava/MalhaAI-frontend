@@ -1,7 +1,8 @@
 <div class="page">
   <header class="page-header">
     <div>
-      <h1 class="page-title">Coordenação de Oferta</h1>
+      <p class="page-kicker">Coordenação</p>
+      <h1 class="page-title">Oferta semestral</h1>
       <p class="page-subtitle">Defina vagas e disponibilidade por disciplina no semestre.</p>
     </div>
     <app-botao variant="accent" [loading]="saving()" [disabled]="loading()" (clicked)="salvar()">
@@ -13,7 +14,7 @@
     <div class="error-banner">{{ erro() }}</div>
   }
   @if (sucesso()) {
-    <div class="success-banner">{{ sucesso() }}</div>
+    <div class="sucesso-banner">{{ sucesso() }}</div>
   }
 
   @if (loading()) {

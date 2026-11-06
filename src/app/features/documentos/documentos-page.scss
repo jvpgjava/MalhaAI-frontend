@@ -1,0 +1,38 @@
+.page-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.docs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.docs-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+
+  li + li {
+    margin-top: 0.55rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .docs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header {
+    app-botao {
+      width: 100%;
+    }
+  }
+}

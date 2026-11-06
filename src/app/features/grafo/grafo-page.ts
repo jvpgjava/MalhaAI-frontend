@@ -6,6 +6,7 @@ import { Disciplina, OrientacaoResponse } from '../../core/models/api.models';
 import { SEMESTRE_ATUAL, SEMESTRE_PRESETS, normalizarSemestre } from '../../core/semestre';
 import { BotaoComponent } from '../../ui/botao/botao';
 import { CardComponent } from '../../ui/card/card';
+import { ModalComponent } from '../../ui/modal/modal';
 import { OfertaService } from '../coordenacao/oferta.service';
 import { ProgressoService } from '../progresso/progresso.service';
 import { GrafoMapaComponent } from './grafo-mapa/grafo-mapa';
@@ -14,7 +15,7 @@ import { GrafoService } from './grafo.service';
 @Component({
   selector: 'app-grafo-page',
   standalone: true,
-  imports: [FormsModule, GrafoMapaComponent, CardComponent, BotaoComponent],
+  imports: [FormsModule, GrafoMapaComponent, CardComponent, BotaoComponent, ModalComponent],
   templateUrl: './grafo-page.html',
   styleUrl: './grafo-page.scss',
 })
@@ -73,14 +74,18 @@ export class GrafoPage implements OnInit {
       if (sems.length) {
         this.semestresOpcoes.set([...new Set([...SEMESTRE_PRESETS, ...sems])].sort());
       }
-    } catch {
-      /* presets locais */
-    }
+    } catch {}
     await this.reload();
   }
 
   onSelecionar(disciplina: Disciplina): void {
     this.selecionada.set(disciplina);
+    this.explicacao.set(null);
+    this.explicacaoErro.set(null);
+  }
+
+  fecharDetalhe(): void {
+    this.selecionada.set(null);
     this.explicacao.set(null);
     this.explicacaoErro.set(null);
   }
@@ -108,6 +113,8 @@ export class GrafoPage implements OnInit {
       this.erro.set('Semestre inválido. Use 2025.1 ou 2025/1.');
       return;
     }
+    this.erro.set(null);
+    this.orientacaoErro.set(null);
     this.semestre.set(canon);
     this.semestreInput.set(canon);
     this.orientacao.set(null);
@@ -126,8 +133,8 @@ export class GrafoPage implements OnInit {
     }
 
     this.buscando.set(true);
+    this.erro.set(null);
     this.orientacaoErro.set(null);
-    // Limpa resultado anterior para não manter trajeto/destaques enquanto carrega
     this.orientacao.set(null);
     this.rotaSemestre.set([]);
     this.caminhoCriticoIds.set([]);
@@ -155,9 +162,7 @@ export class GrafoPage implements OnInit {
             .filter((o) => o.ofertada && !concluidas.has(Number(o.disciplinaId)))
             .map((o) => Number(o.disciplinaId)),
         );
-      } catch {
-        // mantém proximasOfertadasIds da orientação
-      }
+      } catch {}
     } catch (err) {
       const httpErr = err as HttpErrorResponse;
       this.orientacaoErro.set(

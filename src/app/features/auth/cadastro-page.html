@@ -1,15 +1,18 @@
 <div class="auth-screen">
   <div class="auth-wrap">
     <header class="auth-brand">
+      <img class="auth-brand__mark" src="/M-logo.png" width="72" height="72" alt="" />
       <p class="auth-kicker">Planejador curricular</p>
-      <h1 class="auth-logo">Malha<span class="accent">IA</span></h1>
-      <p class="auth-tagline">Monte sua trajetória com clareza</p>
+      <p class="auth-tagline">Crie sua conta de estudante</p>
     </header>
 
     <section class="auth-panel" aria-labelledby="cadastro-title">
       <header class="auth-panel__header">
         <h2 id="cadastro-title">Criar conta</h2>
-        <p>Leva menos de um minuto para começar</p>
+        <p>
+          O cadastro público é para <strong>Estudante</strong>. Professor, Coordenação e Dev são
+          criados pelo painel Contas (DEV).
+        </p>
       </header>
 
       <form class="auth-form" (ngSubmit)="submit()">
@@ -48,30 +51,6 @@
           [(value)]="confirmarSenha"
         />
 
-        <div>
-          <p class="papel-label">Papel</p>
-          <div class="papel-grid">
-            <button
-              type="button"
-              class="papel-card"
-              [class.selected]="papel() === 'ALUNO'"
-              (click)="selecionarPapel('ALUNO')"
-            >
-              Aluno
-              <small>Progresso, grafo e REA</small>
-            </button>
-            <button
-              type="button"
-              class="papel-card"
-              [class.selected]="papel() === 'COORDENACAO'"
-              (click)="selecionarPapel('COORDENACAO')"
-            >
-              Coordenação
-              <small>Oferta do semestre</small>
-            </button>
-          </div>
-        </div>
-
         @if (erro()) {
           <p class="auth-error" role="alert">{{ erro() }}</p>
         }
@@ -84,7 +63,7 @@
             [loading]="loading()"
             [disabled]="loading()"
           >
-            Cadastrar
+            Cadastrar como estudante
           </app-botao>
         </div>
       </form>

@@ -1,16 +1,12 @@
-:host {
-  display: block;
-  width: 100%;
-}
-
 .ui-input {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  width: 100%;
 }
 
 .ui-input__label {
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--color-primary);
 }
@@ -19,18 +15,24 @@
   position: relative;
   display: flex;
   align-items: center;
-  width: 100%;
+}
+
+.ui-input__field--invalid .ui-input__control {
+  border-color: var(--color-danger);
 }
 
 .ui-input__control {
   width: 100%;
   min-height: 44px;
-  padding: 0.65rem 0.85rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-control);
+  padding: 0.7rem 0.85rem;
   background: var(--color-surface);
   color: var(--color-ink);
   outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .ui-input__control--with-toggle {
@@ -38,17 +40,8 @@
 }
 
 .ui-input__control:focus {
-  border-color: var(--color-teal);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-teal) 18%, transparent);
-}
-
-.ui-input__field--invalid .ui-input__control {
-  border-color: color-mix(in srgb, var(--color-accent) 70%, var(--color-border));
-}
-
-.ui-input__field--invalid .ui-input__control:focus {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 16%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
 }
 
 .ui-input__control:disabled {
@@ -59,16 +52,21 @@
 .ui-input__toggle {
   position: absolute;
   right: 0.35rem;
+  top: 50%;
+  transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.1rem;
+  height: 2.1rem;
   border: 0;
-  border-radius: calc(var(--radius-control) - 2px);
+  border-radius: 0.55rem;
   background: transparent;
   color: var(--color-muted);
   cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 
   svg {
     width: 1.15rem;
@@ -76,17 +74,13 @@
   }
 
   &:hover {
-    color: var(--color-primary);
     background: var(--color-soft);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-teal);
-    outline-offset: 1px;
+    color: var(--color-primary);
   }
 }
 
 .ui-input__error {
-  color: var(--color-accent);
   font-size: 0.8rem;
+  color: var(--color-danger);
+  font-weight: 500;
 }

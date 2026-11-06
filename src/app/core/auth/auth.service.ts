@@ -2,12 +2,22 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import {
+  AdminCriarUsuarioRequest,
+  AdminUsuarioResponse,
   AuthResponse,
   AuthUser,
   CadastroRequest,
   LoginRequest,
-} from '../models/api.models';
-import { Papel } from './auth.models';
+  Papel,
+  canAdminUsuarios,
+  canGerirOferta,
+  canIndexarDocumentos,
+  isAluno,
+  isCoordenacao,
+  isDev,
+  isProfessor,
+  labelPapel,
+} from './auth.models';
 
 const SESSION_KEY = 'malhaia.auth';
 
@@ -25,14 +35,26 @@ export class AuthService {
   readonly usuario = signal<AuthUser | null>(null);
   readonly displayName = signal<string | null>(null);
 
-  /** Alias usado pelas páginas / navbar */
   readonly currentUser = this.usuario;
 
   readonly isAuthenticated = computed(() => this.token() !== null);
-  readonly isCoordenacao = computed(() => this.usuario()?.papel === 'COORDENACAO');
+  readonly papel = computed(() => this.usuario()?.papel ?? null);
+  readonly papelLabel = computed(() => labelPapel(this.papel()));
+
+  readonly isAluno = computed(() => isAluno(this.papel()));
+  readonly isProfessor = computed(() => isProfessor(this.papel()));
+  readonly isCoordenacao = computed(() => isCoordenacao(this.papel()));
+  readonly isDev = computed(() => isDev(this.papel()));
+  readonly canIndexarDocumentos = computed(() => canIndexarDocumentos(this.papel()));
+  readonly canGerirOferta = computed(() => canGerirOferta(this.papel()));
+  readonly canAdminUsuarios = computed(() => canAdminUsuarios(this.papel()));
 
   constructor() {
     this.restoreSession();
+  }
+
+  homePath(): string {
+    return '/grafo';
   }
 
   login(request: LoginRequest): Observable<AuthResponse> {
@@ -42,9 +64,13 @@ export class AuthService {
   }
 
   cadastro(request: CadastroRequest, nomeCompleto?: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>('/api/auth/cadastro', request).pipe(
-      tap((response) => this.applySession(response, nomeCompleto)),
-    );
+    return this.http
+      .post<AuthResponse>('/api/auth/cadastro', { ...request, papel: 'ALUNO' satisfies Papel })
+      .pipe(tap((response) => this.applySession(response, nomeCompleto)));
+  }
+
+  criarUsuario(request: AdminCriarUsuarioRequest): Observable<AdminUsuarioResponse> {
+    return this.http.post<AdminUsuarioResponse>('/api/admin/usuarios', request);
   }
 
   logout(): void {
