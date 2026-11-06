@@ -205,10 +205,15 @@
     </div>
 
     <div class="side-actions">
-      <app-botao variant="accent" [loading]="explicacaoLoading()" (clicked)="carregarExplicacao()">
+      <app-botao
+        variant="accent"
+        [fullWidth]="true"
+        [loading]="explicacaoLoading()"
+        (clicked)="carregarExplicacao()"
+      >
         Ver explicação completa IA
       </app-botao>
-      <app-botao variant="outline" (clicked)="marcarReprovada()">
+      <app-botao variant="outline" [fullWidth]="true" (clicked)="marcarReprovada()">
         Marcar como reprovada
       </app-botao>
     </div>
